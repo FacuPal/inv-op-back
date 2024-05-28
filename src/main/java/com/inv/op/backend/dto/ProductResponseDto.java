@@ -14,15 +14,24 @@ import lombok.Setter;
 public class ProductResponseDto implements Serializable {
 
     public ProductResponseDto(Product product){
-        this.family = product.getFamily();
+        this.productName = product.getProductName();
+        this.productDescription = product.getProductDescription();
+        this.optimalBatch = product.getOptimalBatch();
+        this.orderLimit = product.getOrderLimit();  
+        this.safeStock = product.getSafeStock();
         this.stock = product.getStock();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
+        // this.price = product.getPrice();
+        this.productFamily = new ProductFamilyResponseDto(product.getProductFamily());
+        this.isDeleted = product.getIsDeleted();
     }
 
-    private String description;
-    private String family;
-	private int stock;
-    private long price;
+    private String productName;
+    private String productDescription;
+    private Integer optimalBatch;
+    private Integer orderLimit;
+    private Integer safeStock;
+    private Integer stock;
+    private Boolean isDeleted;
+    private ProductFamilyResponseDto productFamily;
 
 }

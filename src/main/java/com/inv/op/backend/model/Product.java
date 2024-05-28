@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,34 +24,75 @@ import lombok.Setter;
 public class Product {
     
     @Id
-    @JsonProperty(value="id")
+    @JsonProperty(value="productId")
+    @Column(name = "product_id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Long productId;
 
 
-    @JsonProperty(value = "description")
+    @JsonProperty(value = "productName")
     @Column(
+        name = "product_name",
         length = 30,
         nullable = false
     )
-    private String description;
+    private String productName;
 
 
-    @JsonProperty(value = "family")
+    @JsonProperty(value = "productDescription")
     @Column(
+        name = "product_description",
         length = 30,
         nullable = false
     )
-    private String family;
+    private String productDescription;
+
+
+
+    @ManyToOne
+    @JoinColumn(name = "product_family_id", nullable = false)
+    @JsonProperty(value = "productFamily")
+    private ProductFamily productFamily;
+
+
+
+    @JsonProperty(value = "optimalBatch")
+    @Column(
+        name = "optimal_batch", 
+        nullable = false
+    )
+	private Integer optimalBatch;
+
+
+    @JsonProperty(value = "orderLimit")
+    @Column(
+        name = "order_limit", 
+        nullable = false
+    )
+	private Integer orderLimit;
+
+
+
+    @JsonProperty(value = "safeStock")
+    @Column(
+        name = "safe_stock", 
+        nullable = false
+    )
+	private Integer safeStock;
 
 
     @JsonProperty(value = "stock")
-    @Column(nullable = false)
-	private int stock;
+    @Column(
+        name = "stock",
+        nullable = false)
+	private Integer stock;
 
 
-    @JsonProperty(value = "price")
-    @Column(nullable = false)
-	private long price;
+    @JsonProperty(value = "isDeleted")
+    @Column(
+        name = "is_deleted", 
+        nullable = false
+    )
+	private Boolean isDeleted;
 
 }
