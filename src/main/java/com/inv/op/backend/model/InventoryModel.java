@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -42,6 +44,8 @@ public class InventoryModel {
 
 
     @OneToMany(mappedBy = "inventoryModel")
+    // @ManyToMany(mappedBy = "inventoryModel"
+    // @JoinTable(inverseJoinColumns=@JoinColumn(name="product_family_id"))
     @JsonProperty(value = "productFamilies")
     private List<ProductFamily> productFamilies;
 
