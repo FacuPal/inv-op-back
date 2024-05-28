@@ -51,6 +51,13 @@
 			<artifactId>mariadb-java-client</artifactId>
 			<version>1.5.7</version>
 		</dependency>
+		<dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
 	</dependencies>
 
 	<build>
