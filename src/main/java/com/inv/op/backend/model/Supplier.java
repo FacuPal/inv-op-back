@@ -9,55 +9,34 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 import java.util.List;
 
 @Entity
-@Table(name="supplier")
-@Getter
-@Setter
-@AllArgsConstructor
-@RequiredArgsConstructor
+@Table(name = "supplier")
+@Data
 public class Supplier {
-    
+
     @Id
-    @JsonProperty(value="supplierId")
+    @JsonProperty(value = "supplierId")
     @Column(name = "supplier_id")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long supplierId;
 
-
     @JsonProperty(value = "supplierName")
-    @Column(
-        name = "supplier_name",
-        length = 30,
-        nullable = false,
-        unique = true
-    )
+    @Column(name = "supplier_name", length = 30, nullable = false, unique = true)
     private String supplierName;
-
 
     @OneToMany(mappedBy = "supplier")
     @JsonProperty(value = "productFamilies")
     private List<ProductFamily> productFamilies;
 
-
     @JsonProperty(value = "supplierDeliveryTime")
-    @Column(
-        name = "supplier_delivery_time",
-        nullable = false
-    )
+    @Column(name = "supplier_delivery_time", nullable = false)
     private Integer supplierDeliveryTime;
 
-
     @JsonProperty(value = "isDeleted")
-    @Column(
-        name = "is_deleted", 
-        nullable = false
-    )
-	private Boolean isDeleted;
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted;
 
 }
