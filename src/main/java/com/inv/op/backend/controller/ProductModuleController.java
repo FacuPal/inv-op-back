@@ -17,35 +17,34 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inv.op.backend.dto.CreateProductRequest;
 import com.inv.op.backend.dto.ProductDto;
 import com.inv.op.backend.dto.SupplierDto;
+import com.inv.op.backend.error.ProductNotFoundError;
+import com.inv.op.backend.error.ProductSaveError;
+import com.inv.op.backend.error.SupplierNotFoundError;
 import com.inv.op.backend.service.ProductModuleService;
-
 
 @RestController
 @RequestMapping("/productModule")
 public class ProductModuleController {
-    
+
     @Autowired
     ProductModuleService productModuleService;
 
-    //Product endpoints
+    // Product endpoints
     @GetMapping(path = "/product/{id}", produces = "application/json")
-    public  Optional<ProductDto>  getProduct(@PathVariable Long id){
-        return productModuleService.getProduct(id);      
+    public Optional<ProductDto> getProduct(@PathVariable Long id) throws ProductNotFoundError {
+        return productModuleService.getProduct(id);
     }
-
 
     @PostMapping(path = "/product")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<Serializable> saveProduct(@RequestBody CreateProductRequest product){
+    public ResponseEntity<Serializable> saveProduct(@RequestBody CreateProductRequest product) throws ProductSaveError {
         return ResponseEntity.ok().body(productModuleService.saveProduct(product));
     }
 
-
-    //Supplier Endpoints
+    // Supplier Endpoints
     @GetMapping(path = "/supplier/{id}", produces = "application/json")
-    public SupplierDto getSupplier(@PathVariable Long id){
+    public SupplierDto getSupplier(@PathVariable Long id) throws SupplierNotFoundError {
         return productModuleService.getSupplier(id);
     }
 
-    
 }
