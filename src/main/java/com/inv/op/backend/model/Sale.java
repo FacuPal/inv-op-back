@@ -3,6 +3,8 @@ package com.inv.op.backend.model;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.inv.op.backend.dto.SaleDto;
+import com.inv.op.backend.util.UpdateValidator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,5 +44,12 @@ public class Sale {
     @JsonProperty(value = "quantity")
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
+
+    public Sale updateValues(SaleDto requestBody) {
+        customerName = UpdateValidator.isEmptyOrNull(requestBody.getCustomerName()) ? customerName : requestBody.getCustomerName();
+        saleDate = UpdateValidator.isEmptyOrNull(requestBody.getSaleDate()) ? saleDate : requestBody.getSaleDate();
+        quantity = requestBody.getQuantity() == null ? quantity : requestBody.getQuantity();
+        return this;
+    }
 
 }
