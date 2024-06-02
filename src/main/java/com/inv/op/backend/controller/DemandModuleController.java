@@ -18,7 +18,12 @@ public class DemandModuleController {
     @Autowired
     DemandModuleService demandModuleService;
 
-     @PostMapping(path = "/uploadHistoricDemand")
+    @GetMapping(path = "/uploadHistoricDemand")
+    public String getHistoricDemand(@RequestBody String requestBody){
+        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    }
+
+    @PostMapping(path = "/uploadHistoricDemand")
     public String uploadHistoricDemand(@RequestBody String requestBody){
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
     }

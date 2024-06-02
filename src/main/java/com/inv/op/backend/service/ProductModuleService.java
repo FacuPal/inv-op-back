@@ -34,11 +34,11 @@ public class ProductModuleService {
 
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
 
-        Optional<ProductFamily> productFamily = productFamilyRepository.findById(newProduct.getProductFamilyId());
+        ProductFamily productFamily = productFamilyRepository.findById(newProduct.getProductFamilyId()).orElseThrow(() -> new ProductFamilyNotFound());
 
-        if (!productFamily.isPresent()) {
-            throw new ProductFamilyNotFound();
-        }
+        // if (!productFamily.isPresent()) {
+        //     throw new ProductFamilyNotFound();
+        // }
 
         // Product(Long id, String name, String description, ProductFamily
         // productFamily, Integer optimalBatch, Integer orderLimit, Integer safeStock,
@@ -47,7 +47,7 @@ public class ProductModuleService {
         Product product = new Product(null,
                 newProduct.getProductName(),
                 newProduct.getProductDescription(),
-                productFamily.get(),
+                productFamily,
                 newProduct.getOptimalBatch(),
                 newProduct.getOrderLimit(),
                 newProduct.getSafeStock(),
