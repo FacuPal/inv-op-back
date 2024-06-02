@@ -1,15 +1,16 @@
 package com.inv.op.backend.controller;
 
+import com.inv.op.backend.dto.DTODemandaHistoricaAnual;
+import com.inv.op.backend.dto.DTOError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 
 import com.inv.op.backend.service.DemandModuleService;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/demandModule")
@@ -18,33 +19,49 @@ public class DemandModuleController {
     @Autowired
     DemandModuleService demandModuleService;
 
-    @GetMapping(path = "/uploadHistoricDemand")
-    public String getHistoricDemand(@RequestBody String requestBody){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    @GetMapping(path = "/products/{search}")
+    public ResponseEntity<?> getProducts(@PathVariable String search){
+        try {
+            return ResponseEntity.ok(demandModuleService.getProducts(search));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
+    }
+    @GetMapping(path = "/historicDemand/{articulo}")
+    public ResponseEntity<?> getHistoricDemand(@PathVariable Long articulo, @RequestParam("desde") Integer desde, @RequestParam("hasta") Integer hasta){
+        try {
+            return ResponseEntity.ok(demandModuleService.getHistoricDemand(articulo, desde, hasta));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
 
-    @PostMapping(path = "/uploadHistoricDemand")
-    public String uploadHistoricDemand(@RequestBody String requestBody){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    @PostMapping(path = "/historicDemand/{articulo}")
+    public ResponseEntity<?> uploadHistoricDemand(@PathVariable Long articulo, @RequestBody Collection<DTODemandaHistoricaAnual> dtos){
+        try {
+            return ResponseEntity.ok(demandModuleService.postHistoricDemand(articulo, dtos));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
 
     @GetMapping(path = "/generalParameters")
-    public String getGeneralParameters(@RequestBody String requestBody){
+    public ResponseEntity<?> getGeneralParameters(@RequestBody String requestBody){
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
     }
 
     @PostMapping(path = "/generalParameters")
-    public String saveGeneralParameters(@RequestBody String requestBody){
+    public ResponseEntity<?> saveGeneralParameters(@RequestBody String requestBody){
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
     }
 
     @GetMapping(path = "/demandPrediction")
-    public String getDemandPrediction(@RequestBody String requestBody){
+    public ResponseEntity<?> getDemandPrediction(@RequestBody String requestBody){
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
     }
 
-    @PostMapping(path = "/predictiNextPeriodDemand")
-    public String predictNextPeriodDemand(@RequestBody String requestBody){
+    @PostMapping(path = "/predictNextPeriodDemand")
+    public ResponseEntity<?> predictNextPeriodDemand(@RequestBody String requestBody){
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
     }
     
