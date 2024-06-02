@@ -1,5 +1,6 @@
 package com.inv.op.backend.repository;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.data.repository.ListCrudRepository;
@@ -15,4 +16,6 @@ import com.inv.op.backend.model.Product;
 public interface ProductRepository extends ListCrudRepository<Product, Long> {
 
     Optional<ProductDto> findProductByProductId(Long id);
+
+    Collection<Product> findByProductNameContainingIgnoreCase(String productName);
 }
