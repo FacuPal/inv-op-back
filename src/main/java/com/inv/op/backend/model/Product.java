@@ -14,11 +14,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "product")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Product {
 
     @Id
@@ -41,23 +43,23 @@ public class Product {
     private ProductFamily productFamily;
 
     @JsonProperty(value = "optimalBatch")
-    @Column(name = "optimal_batch", nullable = false)
+    @Column(name = "optimal_batch", nullable = false, columnDefinition = "int default 100")
     private Integer optimalBatch;
 
     @JsonProperty(value = "orderLimit")
-    @Column(name = "order_limit", nullable = false)
+    @Column(name = "order_limit", nullable = false, columnDefinition = "int default 100")
     private Integer orderLimit;
 
     @JsonProperty(value = "safeStock")
-    @Column(name = "safe_stock", nullable = false)
+    @Column(name = "safe_stock", nullable = false, columnDefinition = "int default 0")
     private Integer safeStock;
 
     @JsonProperty(value = "stock")
-    @Column(name = "stock", nullable = false)
+    @Column(name = "stock", nullable = false, columnDefinition = "int default 0")
     private Integer stock;
 
     @JsonProperty(value = "isDeleted")
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean not null default false ")
     private Boolean isDeleted;
 
 }

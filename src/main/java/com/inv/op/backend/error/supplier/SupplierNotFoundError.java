@@ -1,4 +1,4 @@
-package com.inv.op.backend.error;
+package com.inv.op.backend.error.supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

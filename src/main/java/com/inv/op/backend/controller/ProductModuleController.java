@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inv.op.backend.dto.CreateProductRequest;
 import com.inv.op.backend.dto.ProductDto;
 import com.inv.op.backend.dto.SupplierDto;
-import com.inv.op.backend.error.ProductNotFoundError;
-import com.inv.op.backend.error.ProductSaveError;
-import com.inv.op.backend.error.SupplierNotFoundError;
+import com.inv.op.backend.error.product.ProductNotFoundError;
+import com.inv.op.backend.error.product.ProductSaveError;
+import com.inv.op.backend.error.supplier.SupplierNotFoundError;
 import com.inv.op.backend.service.ProductModuleService;
 
 @RestController
