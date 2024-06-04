@@ -1,5 +1,6 @@
 package com.inv.op.backend.controller;
 
+import com.inv.op.backend.dto.DTODemandPredictionModel;
 import com.inv.op.backend.dto.DTODemandaHistoricaAnual;
 import com.inv.op.backend.dto.DTOError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,39 @@ public class DemandModuleController {
     @PostMapping(path = "/generalParameters")
     public ResponseEntity<?> saveGeneralParameters(@RequestBody String requestBody){
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    }
+
+
+
+
+
+    @GetMapping(path = "/model")
+    public ResponseEntity<?> getModels(){
+        try {
+            return ResponseEntity.ok(demandModuleService.getModels());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
+    }
+
+    @PutMapping(path = "/model")
+    public ResponseEntity<?> putModel(@RequestBody DTODemandPredictionModel dto){
+        try {
+            demandModuleService.putModel(dto);
+            return ResponseEntity.ok("");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping(path = "/model/{id}")
+    public ResponseEntity<?> deleteModel(@PathVariable Long id){
+        try {
+            demandModuleService.deleteModel(id);
+            return ResponseEntity.ok("");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
 
     @GetMapping(path = "/demandPrediction")
