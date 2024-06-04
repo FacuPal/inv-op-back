@@ -1,8 +1,9 @@
 package com.inv.op.backend;
 
+import com.inv.op.backend.model.DemandPredictionModelType;
 import com.inv.op.backend.model.Product;
 import com.inv.op.backend.model.ProductFamily;
-import com.inv.op.backend.repository.HistoricDemandRepository;
+import com.inv.op.backend.repository.DemandPredictionModelTypeRepository;
 import com.inv.op.backend.repository.ProductFamilyRepository;
 import com.inv.op.backend.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,9 @@ public class BackendApplication {
 
 	@Autowired
 	ProductRepository productRepository;
+
+	@Autowired
+    DemandPredictionModelTypeRepository demandPredictionModelRepositoryType;
 
 	@Bean
 	public ModelMapper modelMapper() {
@@ -84,6 +88,23 @@ public class BackendApplication {
 			product4 = productRepository.save(product4);
 
 
+			DemandPredictionModelType pmpDPMT = new DemandPredictionModelType();
+			pmpDPMT.setDemandPredictionModelTypeName("PMP");
+			pmpDPMT.setIsDeleted(false);
+			DemandPredictionModelType pmseDPMT = new DemandPredictionModelType();
+			pmseDPMT.setDemandPredictionModelTypeName("PMSE");
+			pmseDPMT.setIsDeleted(false);
+			DemandPredictionModelType rlDPMT = new DemandPredictionModelType();
+			rlDPMT.setDemandPredictionModelTypeName("RL");
+			rlDPMT.setIsDeleted(false);
+			DemandPredictionModelType ixDPMT = new DemandPredictionModelType();
+			ixDPMT.setDemandPredictionModelTypeName("Ix");
+			ixDPMT.setIsDeleted(false);
+
+			demandPredictionModelRepositoryType.save(pmpDPMT);
+			demandPredictionModelRepositoryType.save(pmseDPMT);
+			demandPredictionModelRepositoryType.save(rlDPMT);
+			demandPredictionModelRepositoryType.save(ixDPMT);
 
 
 
