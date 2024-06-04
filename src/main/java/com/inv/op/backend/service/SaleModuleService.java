@@ -79,5 +79,25 @@ public class SaleModuleService {
         }
         return modelMapper.map(sale, SaleDto.class);
     }
+
+
+    public SaleDto updateSale(Long id, SaleDto requestBody) {
+        Optional<Sale> sale = saleRepository.findById(id);
+
+        if (!sale.isPresent()) {
+            throw new SaleNotFoundError();
+        }
+
+        Sale saleToUpdate = sale.get().updateValues(requestBody);
+
+        try {
+            saleRepository.save(saleToUpdate);
+            
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return modelMapper.map(saleToUpdate, SaleDto.class);
+    }
 }
 
