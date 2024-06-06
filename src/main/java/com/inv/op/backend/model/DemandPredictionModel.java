@@ -28,9 +28,18 @@ public abstract class DemandPredictionModel {
     private Boolean isDeleted;
 
     @ManyToOne
-    @JoinColumn(name = "demand_prediction_model_type_id", nullable = false, referencedColumnName = "demand_prediction_model_type_id", foreignKey = @ForeignKey(name = "FK_demand_prediction_model_demand_prediction_model_type"))
+    @JoinColumn(name = "demand_prediction_model_type_id", nullable = false, referencedColumnName = "demand_prediction_model_type_id", foreignKey = @ForeignKey(name = "FK_demand_prediction_model_dpm_type"))
     @JsonProperty(value = "demandPredictionModelType")
     private DemandPredictionModelType demandPredictionModelType;
 
+    @ManyToOne
+    @JoinColumn(name = "demand_prediction_model_product_id", nullable = true, referencedColumnName = "product_id", foreignKey = @ForeignKey(name = "FK_demand_prediction_model_product"))
+    @JsonProperty(value = "demandPredictionModelProduct")
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "demand_prediction_model_product_family_id", nullable = true, referencedColumnName = "product_family_id", foreignKey = @ForeignKey(name = "FK_demand_prediction_model_product_family"))
+    @JsonProperty(value = "demandPredictionModelProductFamily")
+    private ProductFamily productFamily;
 
 }
