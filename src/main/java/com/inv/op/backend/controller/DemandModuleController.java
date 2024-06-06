@@ -12,6 +12,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import com.inv.op.backend.service.DemandModuleService;
 
 import java.util.Collection;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/demandModule")
@@ -46,6 +47,9 @@ public class DemandModuleController {
         }
     }
 
+
+
+
     @GetMapping(path = "/generalParameters")
     public ResponseEntity<?> getGeneralParameters(@RequestBody String requestBody){
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
@@ -57,23 +61,30 @@ public class DemandModuleController {
     }
 
 
-
-
-
-    @GetMapping(path = "/model")
-    public ResponseEntity<?> getModels(){
+    @GetMapping(path = "/productsAndFamilies/{search}")
+    public ResponseEntity<?> getProductsAndFamilies(@PathVariable String search){
         try {
-            return ResponseEntity.ok(demandModuleService.getModels());
+            return ResponseEntity.ok(demandModuleService.getProductsAndFamilies(search));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
         }
     }
 
-    @PutMapping(path = "/model")
-    public ResponseEntity<?> putModel(@RequestBody DTODemandPredictionModel dto){
+
+    @GetMapping(path = "/model/{id}")
+    public ResponseEntity<?> getModels(@PathVariable Long id, @RequestParam("family") Boolean family){
         try {
-            demandModuleService.putModel(dto);
-            return ResponseEntity.ok("");
+            return ResponseEntity.ok(demandModuleService.getModels(id, family));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
+    }
+
+    @PutMapping(path = "/model/{id}")
+    public ResponseEntity<?> putModel(@RequestBody DTODemandPredictionModel dto, @PathVariable Long id, @RequestParam("family") Boolean family){
+        try {
+            Long ret = demandModuleService.putModel(dto, id, family);
+            return ResponseEntity.ok("{\"id\": " + ret + "}");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
         }
@@ -89,14 +100,15 @@ public class DemandModuleController {
         }
     }
 
-    @GetMapping(path = "/demandPrediction")
-    public ResponseEntity<?> getDemandPrediction(@RequestBody String requestBody){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    @GetMapping(path = "/demandPrediction/{id}")
+    public ResponseEntity<?> getDemandPrediction(@PathVariable Long id, @RequestParam("family") Boolean family, @RequestParam("desde") Long desde){
+        try {
+            return ResponseEntity.ok(demandModuleService.predict(id, family, new Date(desde)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
 
-    @PostMapping(path = "/predictNextPeriodDemand")
-    public ResponseEntity<?> predictNextPeriodDemand(@RequestBody String requestBody){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
-    }
     
 }

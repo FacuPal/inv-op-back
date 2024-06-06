@@ -44,6 +44,7 @@ public class BackendApplication {
 	@Bean
 	public CommandLineRunner init() {
 		return args -> {
+			/*
 			ProductFamily productFamily = new ProductFamily();
 			productFamily.setProductFamilyName("Familia 1");
 			productFamily.setIsDeleted(false);
@@ -85,7 +86,7 @@ public class BackendApplication {
 			product1 = productRepository.save(product1);
 			product2 = productRepository.save(product2);
 			product3 = productRepository.save(product3);
-			product4 = productRepository.save(product4);
+			product4 = productRepository.save(product4);*/
 
 
 			DemandPredictionModelType pmpDPMT = new DemandPredictionModelType();

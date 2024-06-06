@@ -26,8 +26,13 @@ public class PMPDemandPredictionModel extends DemandPredictionModel{
     public String getRawPonderations() {
         return ponderations;
     }
-    public Collection<String> getPonderations() {
-        return Arrays.asList(ponderations.split(";"));
+    public Collection<Double> getPonderations() {
+        Collection<String> strs =  Arrays.asList(ponderations.split(";"));
+        Collection<Double> ret = new ArrayList<>();
+        for (String str : strs) {
+            ret.add(Double.parseDouble(str));
+        }
+        return ret;
     }
 
     public void setPonderations(String ponderations) throws Exception {
