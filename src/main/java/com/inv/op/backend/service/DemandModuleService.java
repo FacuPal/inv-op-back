@@ -1,5 +1,7 @@
 package com.inv.op.backend.service;
 
+import com.inv.op.backend.demandPrediction.DPSFactory;
+import com.inv.op.backend.demandPrediction.DemandPredictionStrategy;
 import com.inv.op.backend.dto.*;
 import com.inv.op.backend.model.*;
 import com.inv.op.backend.repository.*;
@@ -28,6 +30,10 @@ public class DemandModuleService {
 
     @Autowired
     private DemandPredictionModelTypeRepository demandPredictionModelTypeRepository;
+
+
+    @Autowired
+    private DPSFactory dpsFactory;
 
     public Collection<DTODemandaHistoricaProducto> getProducts(String search) {
         Collection<DTODemandaHistoricaProducto> ret = new ArrayList<>();
@@ -195,6 +201,7 @@ public class DemandModuleService {
                     break;
                 case "RL":
                     dto.setIgnorePeriods(((RLDemandPredicitionModel)demandPredictionModel).getIgnorePeriods());
+                    dto.setPredictPeriods(((RLDemandPredicitionModel)demandPredictionModel).getPredictPeriods());
                     break;
                 case "Ix":
                     dto.setLength(((IxDemandPredictionModel)demandPredictionModel).getLength());
@@ -226,97 +233,11 @@ public class DemandModuleService {
             if (opt.isEmpty()) throw new Exception("No se encontró el producto");
             product = opt.get();
         }
-        if(dto.getId() == null) {
-            switch (dto.getType()) {
-                case "PMP":
-                    PMPDemandPredictionModel pmpDemandPredictionModel = new PMPDemandPredictionModel();
-                    pmpDemandPredictionModel.setPonderations(dto.getPonderations());
-                    pmpDemandPredictionModel.setDemandPredictionModelType(optDPMT.get());
-                    pmpDemandPredictionModel.setDemandPredictionModelColor(dto.getColor());
-                    pmpDemandPredictionModel.setIsDeleted(false);
-                    pmpDemandPredictionModel.setProductFamily(productFamily);
-                    pmpDemandPredictionModel.setProduct(product);
-                    ret = demandPredictionModelRepository.save(pmpDemandPredictionModel).getDemandPredictionModelId();
-                    break;
-                case "PMSE":
-                    PMSEDemandPredictionModel pmseDemandPredictionModel = new PMSEDemandPredictionModel();
-                    pmseDemandPredictionModel.setAlpha(dto.getAlpha());
-                    pmseDemandPredictionModel.setRoot(dto.getRoot());
-                    pmseDemandPredictionModel.setDemandPredictionModelType(optDPMT.get());
-                    pmseDemandPredictionModel.setDemandPredictionModelColor(dto.getColor());
-                    pmseDemandPredictionModel.setIsDeleted(false);
-                    pmseDemandPredictionModel.setProductFamily(productFamily);
-                    pmseDemandPredictionModel.setProduct(product);
-                    ret = demandPredictionModelRepository.save(pmseDemandPredictionModel).getDemandPredictionModelId();
-                    break;
-                case "RL":
-                    RLDemandPredicitionModel rlDemandPredicitionModel = new RLDemandPredicitionModel();
-                    rlDemandPredicitionModel.setIgnorePeriods(dto.getIgnorePeriods());
-                    rlDemandPredicitionModel.setDemandPredictionModelType(optDPMT.get());
-                    rlDemandPredicitionModel.setDemandPredictionModelColor(dto.getColor());
-                    rlDemandPredicitionModel.setIsDeleted(false);
-                    rlDemandPredicitionModel.setProductFamily(productFamily);
-                    rlDemandPredicitionModel.setProduct(product);
-                    ret = demandPredictionModelRepository.save(rlDemandPredicitionModel).getDemandPredictionModelId();
-                    break;
-                case "Ix":
-                    IxDemandPredictionModel ixDemandPredictionModel = new IxDemandPredictionModel();
-                    ixDemandPredictionModel.setLength(dto.getLength());
-                    ixDemandPredictionModel.setCount(dto.getCount());
-                    ixDemandPredictionModel.setExpectedDemand(dto.getExpectedDemand());
-                    ixDemandPredictionModel.setDemandPredictionModelType(optDPMT.get());
-                    ixDemandPredictionModel.setDemandPredictionModelColor(dto.getColor());
-                    ixDemandPredictionModel.setIsDeleted(false);
-                    ixDemandPredictionModel.setProductFamily(productFamily);
-                    ixDemandPredictionModel.setProduct(product);
-                    ret = demandPredictionModelRepository.save(ixDemandPredictionModel).getDemandPredictionModelId();
-                    break;
-                default:
-                    throw new Exception("Tipo de modelo no soportado");
-            }
-            return ret;
-        }
-
-        Optional<DemandPredictionModel> optDPM = demandPredictionModelRepository.findById(dto.getId());
-        if(optDPM.isEmpty()) {
-            throw new Exception("No se encontró el modelo");
-        }
-        switch (dto.getType()) {
-            case "PMP":
-                PMPDemandPredictionModel pmpDemandPredictionModel = (PMPDemandPredictionModel)optDPM.get();
-                pmpDemandPredictionModel.setPonderations(dto.getPonderations());
-                pmpDemandPredictionModel.setDemandPredictionModelType(optDPMT.get());
-                pmpDemandPredictionModel.setDemandPredictionModelColor(dto.getColor());
-                demandPredictionModelRepository.save(pmpDemandPredictionModel);
-                break;
-            case "PMSE":
-                PMSEDemandPredictionModel pmseDemandPredictionModel = (PMSEDemandPredictionModel)optDPM.get();
-                pmseDemandPredictionModel.setAlpha(dto.getAlpha());
-                pmseDemandPredictionModel.setRoot(dto.getRoot());
-                pmseDemandPredictionModel.setDemandPredictionModelType(optDPMT.get());
-                pmseDemandPredictionModel.setDemandPredictionModelColor(dto.getColor());
-                demandPredictionModelRepository.save(pmseDemandPredictionModel);
-                break;
-            case "RL":
-                RLDemandPredicitionModel rlDemandPredicitionModel = (RLDemandPredicitionModel)optDPM.get();
-                rlDemandPredicitionModel.setIgnorePeriods(dto.getIgnorePeriods());
-                rlDemandPredicitionModel.setDemandPredictionModelType(optDPMT.get());
-                rlDemandPredicitionModel.setDemandPredictionModelColor(dto.getColor());
-                demandPredictionModelRepository.save(rlDemandPredicitionModel);
-                break;
-            case "Ix":
-                IxDemandPredictionModel ixDemandPredictionModel = (IxDemandPredictionModel)optDPM.get();
-                ixDemandPredictionModel.setLength(dto.getLength());
-                ixDemandPredictionModel.setCount(dto.getCount());
-                ixDemandPredictionModel.setExpectedDemand(dto.getExpectedDemand());
-                ixDemandPredictionModel.setDemandPredictionModelType(optDPMT.get());
-                ixDemandPredictionModel.setDemandPredictionModelColor(dto.getColor());
-                demandPredictionModelRepository.save(ixDemandPredictionModel);
-                break;
-            default:
-                throw new Exception("Tipo de modelo no soportado");
-        }
-        return id;
+        DemandPredictionStrategy dps = dpsFactory.getStrategy(dto.getType());
+        if(dto.getId() == null)
+            return dps.create(dto, productFamily, product);
+        dps.update(dto);
+        return dto.getId();
     }
 
     public void deleteModel(Long id) throws Exception {
@@ -339,7 +260,6 @@ public class DemandModuleService {
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
         Date limite = calendar.getTime();
         calendar.setTime(desde);
 
@@ -357,90 +277,17 @@ public class DemandModuleService {
         }
 
         for (DTODemandPredictionModel model : models) {
+            DemandPredictionStrategy dps = dpsFactory.getStrategy(model.getType());
             DTODemandPrediction prediction = DTODemandPrediction.builder()
                     .id(model.getId())
                     .type(model.getType())
                     .num(model.getNum())
                     .color(model.getColor())
+                    .periods(dps.predict(ret, model))
                     .build();
 
-            Collection<DTODemandPredictionPeriod> periods = new ArrayList<>();
-            switch (model.getType()) {
-                case "PMP":
-                    ArrayList<Double> ponderaciones = new ArrayList<>(((PMPDemandPredictionModel) demandPredictionModelRepository.findById(model.getId()).get()).getPonderations());
-                    Double sumaPonderaciones = 0.0;
-                    for (Double ponderacion : ponderaciones) {
-                        sumaPonderaciones += ponderacion;
-                    }
-                    LinkedList<Integer> prev = new LinkedList<>();
-                    Integer maxMonth = 1;
-                    Integer maxYear = 0;
-                    for (DTODemandRealPeriod period : ret.getPeriods()) {
-                        if (prev.size() < ponderaciones.size()) {
-                            prev.addLast(period.getValue());
-                        } else {
-                            Double value = 0.0;
-                            for(int i = 0; i < ponderaciones.size(); i++) {
-                                value += ponderaciones.get(i) * prev.get(i) / sumaPonderaciones;
-                            }
-                            periods.add(DTODemandPredictionPeriod.builder()
-                                            .month(period.getMonth())
-                                            .year(period.getYear())
-                                            .prediction(value)
-                                            .error(getError(metodoError, period.getValue(), value))
-                                    .build());
-                            prev.removeFirst();
-                            prev.addLast(period.getValue());
-                            if(period.getYear() > maxYear || period.getYear() == maxYear && period.getMonth() > maxMonth) {
-                                maxYear = period.getYear();
-                                maxMonth = period.getMonth();
-                            }
-                        }
-                    }
-
-                    /*if(prev.size() == ponderaciones.size()) {
-                        Double value = 0.0;
-                        for (int i = 0; i < ponderaciones.size(); i++) {
-                            value += ponderaciones.get(i) * prev.get(i) / sumaPonderaciones;
-                        }
-                        periods.add(DTODemandPredictionPeriod.builder()
-                                .month((maxMonth) % 12 + 1)
-                                .year(maxYear + (maxMonth == 12 ? 1 : 0))
-                                .prediction(value)
-                                .error(null)
-                                .build());
-                    }*/
-
-                    break;
-                case "PMSE":
-
-                    break;
-                case "RL":
-
-                    break;
-                case "Ix":
-
-                    break;
-                default:
-                    throw new Exception("Tipo de modelo \"" + model.getType() + "\" no soportado");
-            }
-            prediction.setPeriods(periods);
             ret.getPredictions().add(prediction);
         }
         return ret;
-    }
-
-
-    private Double getError(String metodo, Integer demandaReal, Double prediccion) throws Exception {
-        switch (metodo) {
-            case "MAD":
-                return Math.abs(demandaReal - prediccion);
-            case "MSE":
-                return Math.pow(demandaReal - prediccion, 2);
-            case "MAPE":
-                return Math.abs(demandaReal - prediccion) / demandaReal;
-            default:
-                throw new Exception("Método de cálculo de error no soportado: \"" + metodo + "\"");
-        }
     }
 }

@@ -19,7 +19,7 @@ public interface HistoricDemandRepository extends ListCrudRepository<HistoricDem
 
     Optional<HistoricDemand> findByProductAndYearAndMonth(Product product, Integer year, Integer month);
 
-    @Query("SELECT h.quantity " +
+    @Query("SELECT SUM(h.quantity) " +
             "FROM HistoricDemand h " +
             "WHERE h.month = :month AND h.year = :year " +
             "AND (" +
