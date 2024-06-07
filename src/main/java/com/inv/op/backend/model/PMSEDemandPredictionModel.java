@@ -22,6 +22,6 @@ public class PMSEDemandPredictionModel extends DemandPredictionModel {
 
     @JsonProperty(value = "root")
     @Column(name = "root", nullable = true)
-    private Integer root;
+    private Double root;
 
 }

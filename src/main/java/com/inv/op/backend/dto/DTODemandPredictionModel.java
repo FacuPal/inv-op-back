@@ -14,9 +14,10 @@ public class DTODemandPredictionModel {
     String ponderations;
     //PMSE
     Double alpha;
-    Integer root;
+    Double root;
     //RL
     Integer ignorePeriods;
+    Integer predictPeriods;
     //Ix
     Integer length;
     Integer count;
