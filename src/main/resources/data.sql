@@ -53,3 +53,19 @@ INSERT INTO historic_demand (month, quantity, year, historic_demand_id, product_
 (10, 16, 2023, 16, 2),
 (11, 19, 2023, 17, 2),
 (12, 23, 2023, 18, 2);
+
+/*Demand Prediction Model Type*/
+INSERT INTO `demand_prediction_model_type` (`is_deleted`, `demand_prediction_model_type_id`, `demand_prediction_model_type_name`) VALUES
+(b'0', 1, 'PMP'),
+(b'0', 2, 'PMSE'),
+(b'0', 3, 'RL'),
+(b'0', 4, 'Ix');
+
+/*Demand Prediction Model*/
+INSERT INTO `demand_prediction_model` (`alpha`, `count`, `expected_demand`, `ignore_periods`, `is_deleted`, `length`, `root`, `demand_prediction_model_id`, `demand_prediction_model_product_family_id`, `demand_prediction_model_product_id`, `demand_prediction_model_type_id`, `demand_prediction_model_color`, `dtype`, `pmp_demand_prediction_model_ponderations`) VALUES
+(NULL, NULL, NULL, NULL, b'0', NULL, NULL, 1, NULL, 2, 1, 'blue', 'PMP', '1;2;3'),
+(NULL, NULL, NULL, NULL, b'0', NULL, NULL, 2, NULL, 2, 1, 'cyan', 'PMP', '1;1;1'),
+(0.9, NULL, NULL, NULL, b'0', NULL, 9, 3, NULL, 2, 2, 'orange', 'PMSE', NULL),
+(0.1, NULL, NULL, NULL, b'0', NULL, 11, 4, NULL, 2, 2, 'red', 'PMSE', NULL),
+(NULL, NULL, NULL, 0, b'0', NULL, NULL, 5, NULL, 2, 3, 'green', 'RL', NULL),
+(NULL, NULL, NULL, 2, b'0', NULL, NULL, 6, NULL, 2, 3, 'darkgreen', 'RL', NULL);

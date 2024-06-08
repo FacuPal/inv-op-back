@@ -17,7 +17,6 @@ public class DTODemandPredictionModel {
     Double root;
     //RL
     Integer ignorePeriods;
-    Integer predictPeriods;
     //Ix
     Integer length;
     Integer count;

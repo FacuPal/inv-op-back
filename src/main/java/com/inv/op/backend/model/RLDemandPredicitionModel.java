@@ -18,8 +18,4 @@ public class RLDemandPredicitionModel extends DemandPredictionModel {
     @JsonProperty(value = "ignorePeriods")
     @Column(name = "ignore_periods", nullable = true)
     private Integer ignorePeriods;
-
-    @JsonProperty(value = "predictPeriods")
-    @Column(name = "predict_periods", nullable = true)
-    private Integer predictPeriods;
 }

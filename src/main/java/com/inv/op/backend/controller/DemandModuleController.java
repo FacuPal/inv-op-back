@@ -101,9 +101,9 @@ public class DemandModuleController {
     }
 
     @GetMapping(path = "/demandPrediction/{id}")
-    public ResponseEntity<?> getDemandPrediction(@PathVariable Long id, @RequestParam("family") Boolean family, @RequestParam("desde") Long desde){
+    public ResponseEntity<?> getDemandPrediction(@PathVariable Long id, @RequestParam("family") Boolean family, @RequestParam("desde") Long desde, @RequestParam("predecirMesActual") Boolean predecirMesActual){
         try {
-            return ResponseEntity.ok(demandModuleService.predict(id, family, new Date(desde)));
+            return ResponseEntity.ok(demandModuleService.predict(id, family, new Date(desde), predecirMesActual));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));

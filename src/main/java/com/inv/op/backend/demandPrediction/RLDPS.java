@@ -40,7 +40,6 @@ public class RLDPS implements DemandPredictionStrategy {
 
         RLDemandPredicitionModel rlDemandPredicitionModel = new RLDemandPredicitionModel();
         rlDemandPredicitionModel.setIgnorePeriods(dto.getIgnorePeriods());
-        rlDemandPredicitionModel.setPredictPeriods(dto.getPredictPeriods());
         rlDemandPredicitionModel.setDemandPredictionModelType(optDPMT.get());
         rlDemandPredicitionModel.setDemandPredictionModelColor(dto.getColor());
         rlDemandPredicitionModel.setIsDeleted(false);
@@ -63,7 +62,6 @@ public class RLDPS implements DemandPredictionStrategy {
 
         RLDemandPredicitionModel rlDemandPredicitionModel = (RLDemandPredicitionModel)optDPM.get();
         rlDemandPredicitionModel.setIgnorePeriods(dto.getIgnorePeriods());
-        rlDemandPredicitionModel.setPredictPeriods(dto.getPredictPeriods());
         rlDemandPredicitionModel.setDemandPredictionModelType(optDPMT.get());
         rlDemandPredicitionModel.setDemandPredictionModelColor(dto.getColor());
         demandPredictionModelRepository.save(rlDemandPredicitionModel);
@@ -73,14 +71,14 @@ public class RLDPS implements DemandPredictionStrategy {
     public Collection<DTODemandPredictionPeriod> predict(DTODemandResults result, DTODemandPredictionModel model) throws Exception {
         Collection<DTODemandPredictionPeriod> periods = new ArrayList<>();
         Integer ignore = model.getIgnorePeriods();
-        Integer predict = model.getPredictPeriods();
+        Integer predict = 3;
 
         Integer sumX = 0;
         Integer sumY = 0;
         BigDecimal sumX2 = BigDecimal.valueOf(0);
         BigDecimal sumXY = BigDecimal.valueOf(0);
 
-        Integer n = result.getPeriods().size();
+        Integer n = 0;
 
         TreeMap<Integer, Integer> l = new TreeMap<>();
 
@@ -88,10 +86,12 @@ public class RLDPS implements DemandPredictionStrategy {
         Integer maxX = 0;
 
         for (DTODemandRealPeriod period : result.getPeriods()) {
-            Integer x = period.getMonth() - 1 + period.getYear() * 12;
-            l.put(x, period.getValue());
-            if(x < minX) minX = x;
-            if(x > maxX) maxX = x;
+            if (period.getValue() != null) {
+                Integer x = period.getMonth() - 1 + period.getYear() * 12;
+                l.put(x, period.getValue());
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+            }
         }
 
         SortedMap<Integer, Integer> sl = l.tailMap(minX + ignore);
@@ -99,6 +99,7 @@ public class RLDPS implements DemandPredictionStrategy {
         for (Map.Entry<Integer, Integer> e : sl.entrySet()) {
             Integer x = e.getKey();
             Integer y = e.getValue();
+            n += 1;
             sumX += x;
             sumY += y;
             sumX2 = sumX2.add(BigDecimal.valueOf(Math.pow((double) x, 2.0)));

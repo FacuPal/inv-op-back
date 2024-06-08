@@ -81,7 +81,11 @@ public class PMPDPS implements DemandPredictionStrategy{
         Integer maxYear = 0;
         for (DTODemandRealPeriod period : result.getPeriods()) {
             if (prev.size() < ponderaciones.size()) {
-                prev.addLast(period.getValue());
+                if (period.getValue() == null) {
+                    prev.addLast(0);
+                } else {
+                    prev.addLast(period.getValue());
+                }
             } else {
                 Double value = 0.0;
                 for(int i = 0; i < ponderaciones.size(); i++) {
@@ -94,14 +98,20 @@ public class PMPDPS implements DemandPredictionStrategy{
                         .error(errorCalculationSingleton.getError(errorCalculationSingleton.getMetodoErrorGlobal(), period.getValue(), value))
                         .build());
                 prev.removeFirst();
-                prev.addLast(period.getValue());
+
+                if (period.getValue() == null) {
+                    prev.addLast(value.intValue());
+                } else {
+                    prev.addLast(period.getValue());
+                }
+
                 if(period.getYear() > maxYear || period.getYear().equals(maxYear) && period.getMonth() - 1  > maxMonth) {
                     maxYear = period.getYear();
                     maxMonth = period.getMonth() - 1;
                 }
             }
         }
-        if ( prev.size() == ponderaciones.size()) {
+        /*if ( prev.size() == ponderaciones.size()) {
             Double value = 0.0;
             for(int i = 0; i < ponderaciones.size(); i++) {
                 value += ponderaciones.get(i) * prev.get(i) / sumaPonderaciones;
@@ -112,7 +122,7 @@ public class PMPDPS implements DemandPredictionStrategy{
                     .prediction(value)
                     .error(errorCalculationSingleton.getError(errorCalculationSingleton.getMetodoErrorGlobal(), null, value))
                     .build());
-        }
+        }*/
         return periods;
     }
 }

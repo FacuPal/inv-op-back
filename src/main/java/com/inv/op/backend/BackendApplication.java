@@ -86,7 +86,7 @@ public class BackendApplication {
 			product1 = productRepository.save(product1);
 			product2 = productRepository.save(product2);
 			product3 = productRepository.save(product3);
-			product4 = productRepository.save(product4);*/
+			product4 = productRepository.save(product4);
 
 
 			DemandPredictionModelType pmpDPMT = new DemandPredictionModelType();
@@ -105,7 +105,7 @@ public class BackendApplication {
 			demandPredictionModelRepositoryType.save(pmpDPMT);
 			demandPredictionModelRepositoryType.save(pmseDPMT);
 			demandPredictionModelRepositoryType.save(rlDPMT);
-			demandPredictionModelRepositoryType.save(ixDPMT);
+			demandPredictionModelRepositoryType.save(ixDPMT);*/
 
 
 

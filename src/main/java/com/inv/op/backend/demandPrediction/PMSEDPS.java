@@ -91,13 +91,19 @@ public class PMSEDPS implements DemandPredictionStrategy {
                     .error(errorCalculationSingleton.getError(errorCalculationSingleton.getMetodoErrorGlobal(), period.getValue(), prev))
                     .build());
 
-            trdPrev = period.getValue();
+
+            if (period.getValue() == null) {
+                trdPrev = prev.intValue();
+            } else {
+                trdPrev = period.getValue();
+            }
 
             if(period.getYear() > maxYear || period.getYear().equals(maxYear) && period.getMonth() - 1  > maxMonth) {
                 maxYear = period.getYear();
                 maxMonth = period.getMonth() - 1;
             }
         }
+        /*
         if (prev != null) {
             prev = prev + a * (trdPrev - prev);
             periods.add(DTODemandPredictionPeriod.builder()
@@ -106,7 +112,7 @@ public class PMSEDPS implements DemandPredictionStrategy {
                     .prediction(prev)
                     .error(errorCalculationSingleton.getError(errorCalculationSingleton.getMetodoErrorGlobal(), null, prev))
                     .build());
-        }
+        }*/
         return periods;
     }
 }
