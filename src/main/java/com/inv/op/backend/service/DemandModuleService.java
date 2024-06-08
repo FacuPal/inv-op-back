@@ -201,7 +201,6 @@ public class DemandModuleService {
                     break;
                 case "RL":
                     dto.setIgnorePeriods(((RLDemandPredicitionModel)demandPredictionModel).getIgnorePeriods());
-                    dto.setPredictPeriods(((RLDemandPredicitionModel)demandPredictionModel).getPredictPeriods());
                     break;
                 case "Ix":
                     dto.setLength(((IxDemandPredictionModel)demandPredictionModel).getLength());
@@ -251,7 +250,7 @@ public class DemandModuleService {
     }
 
 
-    public DTODemandResults predict(Long id, Boolean family, Date desde) throws Exception {
+    public DTODemandResults predict(Long id, Boolean family, Date desde, Boolean predecirMesActual) throws Exception {
         Integer cantPeriodosAPredecir = 3;
         String metodoError = "MAD";
         DTODemandResults ret = DTODemandResults.builder().build();
@@ -260,16 +259,28 @@ public class DemandModuleService {
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         Calendar calendar = Calendar.getInstance();
+
+        Integer currMonth = calendar.get(Calendar.MONTH);
+        Integer currYear = calendar.get(Calendar.YEAR);
+
+        calendar.add(Calendar.MONTH, cantPeriodosAPredecir);
+        if(predecirMesActual) calendar.add(Calendar.MONTH, -1);
         Date limite = calendar.getTime();
         calendar.setTime(desde);
 
         while (calendar.getTime().before(limite)) {
+            Integer month = calendar.get(Calendar.MONTH);
+            Integer year = calendar.get(Calendar.YEAR);
+            Integer demand;
+            if(predecirMesActual && currYear.equals(year) && currMonth.equals(month)) {
+                demand = null;
+            } else {
+                demand = historicDemandRepository.getPeriod(id, family, month + 1, year);
+            }
 
-            Integer demand = historicDemandRepository.getPeriod(id, family, calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
-            if (demand == null) demand = 0;
             ret.getPeriods().add(DTODemandRealPeriod.builder()
-                            .month(calendar.get(Calendar.MONTH) + 1)
-                            .year(calendar.get(Calendar.YEAR))
+                            .month(month + 1)
+                            .year(year)
                             .value(demand)
                     .build());
 
