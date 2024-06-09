@@ -1,6 +1,7 @@
 package com.inv.op.backend.controller;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,11 @@ public class ProductModuleController {
     ProductModuleService productModuleService;
 
     // Product endpoints
+    @GetMapping(path = "/product")
+    public ResponseEntity<?> getProductList() throws ProductNotFoundError {
+        return ResponseEntity.ok(productModuleService.getProductList());
+    }
+
     @GetMapping(path = "/product/{id}", produces = "application/json")
     public Optional<ProductDto> getProduct(@PathVariable Long id) throws ProductNotFoundError {
         return productModuleService.getProduct(id);
@@ -37,7 +43,7 @@ public class ProductModuleController {
 
     @PostMapping(path = "/product")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<Serializable> saveProduct(@RequestBody CreateProductRequest product) throws ProductSaveError {
+    public ResponseEntity<?> saveProduct(@RequestBody CreateProductRequest product) throws ProductSaveError {
         return ResponseEntity.ok().body(productModuleService.saveProduct(product));
     }
 

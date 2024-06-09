@@ -3,6 +3,7 @@ package com.inv.op.backend.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 
+import com.inv.op.backend.dto.DTOError;
 import com.inv.op.backend.dto.SaleDto;
 import com.inv.op.backend.service.SaleModuleService;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,26 +30,29 @@ public class SaleModuleController {
     @Autowired
     SaleModuleService saleModuleService;
 
-    @CrossOrigin("*")
+    // @CrossOrigin(originPatterns = "*")
     @GetMapping(path = "/sale")
-    public  List<SaleDto> getSaleList() throws HttpServerErrorException {
-        return saleModuleService.getSaleList();
+    public  ResponseEntity<?> getSaleList() throws HttpServerErrorException {
+        return ResponseEntity.ok(saleModuleService.getSaleList());
     }
 
+    // @CrossOrigin(originPatterns = "*")
     @GetMapping(path = "/sale/{id}")
-    public SaleDto getSale(@PathVariable Long id){
-        return saleModuleService.getSale(id);
+    public ResponseEntity<?> getSale(@PathVariable Long id){
+        return ResponseEntity.ok(saleModuleService.getSale(id));
     }
 
+    // @CrossOrigin(originPatterns = "*")
     @PutMapping(path = "/sale/{id}")
     public SaleDto updateSale(@PathVariable Long id, @RequestBody SaleDto requestBody){
         return saleModuleService.updateSale(id, requestBody);
     }
-
+    
+    // @CrossOrigin(originPatterns = "*")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/sale")
-    public SaleDto saveNewSale(@RequestBody SaleDto requestBody){
-        return saleModuleService.saveNewSale(requestBody);
+    public ResponseEntity<?> saveNewSale(@RequestBody SaleDto requestBody){
+        return ResponseEntity.ok(saleModuleService.saveNewSale(requestBody));
     }    
 
 

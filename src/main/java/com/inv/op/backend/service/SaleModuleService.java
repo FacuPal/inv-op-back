@@ -2,10 +2,11 @@ package com.inv.op.backend.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,23 +24,21 @@ import com.inv.op.backend.repository.SaleRepository;
 @Service
 public class SaleModuleService {
 
-    @Autowired  
+    @Autowired
     SaleRepository saleRepository;
 
-    @Autowired 
+    @Autowired
     ProductRepository productRepository;
 
     @Autowired
-	private ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
-
-    public List<SaleDto> getSaleList() {
+    public Collection<SaleDto> getSaleList() {
         return saleRepository.findAll()
-            .stream()
-            .map( sale -> modelMapper.map(sale, SaleDto.class))
-            .toList();
+                .stream()
+                .map(sale -> modelMapper.map(sale, SaleDto.class))
+                .toList();
     }
-
 
     public SaleDto getSale(Long id) {
 
@@ -52,25 +51,29 @@ public class SaleModuleService {
         return modelMapper.map(sale.get(), SaleDto.class);
     }
 
-
     public SaleDto saveNewSale(SaleDto requestBody) {
         if (requestBody.getSaleId() != null) {
             throw new NewSaleSaveError();
         }
 
-        Optional<Product> product = productRepository.findById(requestBody.getProductId());
-
-        if (!product.isPresent()){
+        Optional<Product> product;
+        try {
+            product = productRepository.findById(requestBody.getProductId());
+        } catch (Exception e) {
             throw new ProductNotFoundError();
         }
         
-        //TODO: Chequear Stock 
+        if (!product.isPresent()) {
+            throw new ProductNotFoundError();
+        }
+
+        // TODO: Chequear Stock
 
         Sale sale = modelMapper.map(requestBody, Sale.class);
         sale.setProduct(product.get());
         sale.setSaleDate(Date.from(Instant.now().minus(3, ChronoUnit.HOURS)));
 
-        //TODO: Reducir stock del producto 
+        // TODO: Reducir stock del producto
 
         try {
             saleRepository.save(sale);
@@ -79,7 +82,6 @@ public class SaleModuleService {
         }
         return modelMapper.map(sale, SaleDto.class);
     }
-
 
     public SaleDto updateSale(Long id, SaleDto requestBody) {
         Optional<Sale> sale = saleRepository.findById(id);
@@ -92,7 +94,7 @@ public class SaleModuleService {
 
         try {
             saleRepository.save(saleToUpdate);
-            
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -100,4 +102,3 @@ public class SaleModuleService {
         return modelMapper.map(saleToUpdate, SaleDto.class);
     }
 }
-

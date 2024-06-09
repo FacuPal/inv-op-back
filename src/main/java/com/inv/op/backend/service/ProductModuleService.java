@@ -1,7 +1,10 @@
 package com.inv.op.backend.service;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -31,13 +34,16 @@ public class ProductModuleService {
     InventoryModelRepository inventoryModelRepository;
     @Autowired
     SupplierRepository supplierRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
 
-        ProductFamily productFamily = productFamilyRepository.findById(newProduct.getProductFamilyId()).orElseThrow(() -> new ProductFamilyNotFound());
+        ProductFamily productFamily = productFamilyRepository.findById(newProduct.getProductFamilyId())
+                .orElseThrow(() -> new ProductFamilyNotFound());
 
         // if (!productFamily.isPresent()) {
-        //     throw new ProductFamilyNotFound();
+        // throw new ProductFamilyNotFound();
         // }
 
         // Product(Long id, String name, String description, ProductFamily
@@ -63,6 +69,14 @@ public class ProductModuleService {
         // return new DefaultResponseDto(HttpStatus.CREATED, "Product Created");
         return newProduct;
 
+    }
+
+    public Collection<ProductDto> getProductList() throws ProductNotFoundError {
+
+        return productRepository.findAll()
+        .stream()
+        .map(product -> modelMapper.map(product, ProductDto.class))
+        .toList();
     }
 
     public Optional<ProductDto> getProduct(Long id) {
