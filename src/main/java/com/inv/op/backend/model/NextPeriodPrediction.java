@@ -47,4 +47,10 @@ public class NextPeriodPrediction {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+
+    @ManyToOne(targetEntity = DemandPredictionModel.class)
+    @JoinColumn(name = "demand_prediction_model_id", nullable = false, referencedColumnName = "demand_prediction_model_id", foreignKey = @ForeignKey(name = "FK_next_period_prediction_demand_prediction_model"))
+    @JsonProperty(value = "demandPredictionModel")
+    private DemandPredictionModel demandPredictionModel;
+
 }
