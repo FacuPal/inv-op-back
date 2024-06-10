@@ -33,6 +33,13 @@ VALUES
 	("Facundo", "2024-05-30", 1, 10),
 	("Facundo", "2024-05-02", 3, 10);
 
+/*PurchaseOrderStatus*/
+INSERT INTO purchase_order(product_id, purchase_order_date, supplier_id, purchase_order_status) 
+VALUES 
+	(1, '2024-06-09', 1, 'OPEN'),
+	(1, '2024-06-09', 1, 'OPEN'),
+	(1, '2024-06-09', 2, 'OPEN');
+
 /*Historic Demand*/
 INSERT INTO `historic_demand` (`month`, `quantity`, `year`, `historic_demand_id`, `product_id`) VALUES
 (1, 1, 2024, 1, 1),
