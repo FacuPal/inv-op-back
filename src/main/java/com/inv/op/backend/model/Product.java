@@ -62,4 +62,7 @@ public class Product {
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean not null default false ")
     private Boolean isDeleted;
 
+    public Boolean existStock(Integer checkStock) { return stock >=  checkStock; }
+
+    public void reduceStock(Integer reduceStock){stock -= reduceStock;}
 }

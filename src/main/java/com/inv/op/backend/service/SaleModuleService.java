@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,10 @@ import org.springframework.stereotype.Service;
 
 import com.inv.op.backend.dto.SaleDto;
 import com.inv.op.backend.error.product.ProductNotFoundError;
+import com.inv.op.backend.error.product.ProductStockNotEnough;
 import com.inv.op.backend.error.sale.NewSaleSaveError;
 import com.inv.op.backend.error.sale.SaleNotFoundError;
+import com.inv.op.backend.error.sale.SaleSaveError;
 import com.inv.op.backend.model.Product;
 import com.inv.op.backend.model.Sale;
 import com.inv.op.backend.repository.ProductRepository;
@@ -56,24 +57,32 @@ public class SaleModuleService {
             throw new NewSaleSaveError();
         }
 
-        Optional<Product> product;
+        Optional<Product> optProduct;
+
         try {
-            product = productRepository.findById(requestBody.getProductId());
+            optProduct = productRepository.findById(requestBody.getProductId());
         } catch (Exception e) {
             throw new ProductNotFoundError();
         }
         
-        if (!product.isPresent()) {
+        if (!optProduct.isPresent() || optProduct.get().getIsDeleted()) {
             throw new ProductNotFoundError();
         }
 
-        // TODO: Chequear Stock
+        Product product = optProduct.get();
+
+
+        if (!product.existStock(requestBody.getQuantity())) {
+            throw new ProductStockNotEnough();
+        }
+
+        //Se reduce stock
+        product.reduceStock(requestBody.getQuantity()); 
+        productRepository.save(product);
 
         Sale sale = modelMapper.map(requestBody, Sale.class);
-        sale.setProduct(product.get());
+        sale.setProduct(product);
         sale.setSaleDate(Date.from(Instant.now().minus(3, ChronoUnit.HOURS)));
-
-        // TODO: Reducir stock del producto
 
         try {
             saleRepository.save(sale);
@@ -94,9 +103,8 @@ public class SaleModuleService {
 
         try {
             saleRepository.save(saleToUpdate);
-
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SaleSaveError();
         }
 
         return modelMapper.map(saleToUpdate, SaleDto.class);
