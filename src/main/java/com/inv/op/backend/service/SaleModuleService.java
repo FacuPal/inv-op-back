@@ -111,7 +111,7 @@ public class SaleModuleService {
             throw new RuntimeException(e);
         }
 
-        if (product.lessThanSafeStock()) {
+        if (product.lessThanOrderLimit()) {
             createNewPurchaseOrder(product);
         }
 
@@ -137,13 +137,15 @@ public class SaleModuleService {
     }
 
     private void createNewPurchaseOrder(Product product) {
-        
+
         Collection<PurchaseOrder> openPurchaseOrder = purchaseOrderRepository.findByPurchaseOrderStatusAndProductProductId(PurchaseOrderStatusEnum.OPEN, product.getProductId());
 
         if (!openPurchaseOrder.isEmpty()){
             //Ya hay una orden abierta para el producto.
             return;
         }
+
+        //TODO: Poner la cantidad de orden 
 
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
         newPurchaseOrder.setProduct(product);
