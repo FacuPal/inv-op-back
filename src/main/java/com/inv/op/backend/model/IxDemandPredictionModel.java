@@ -19,10 +19,6 @@ public class IxDemandPredictionModel extends DemandPredictionModel {
     @Column(name = "length", nullable = true)
     private Integer length;
 
-    @JsonProperty(value = "count")
-    @Column(name = "count", nullable = true)
-    private Integer count;
-
     @JsonProperty(value = "expectedDemand")
     @Column(name = "expected_demand", nullable = true)
     private Integer expectedDemand;

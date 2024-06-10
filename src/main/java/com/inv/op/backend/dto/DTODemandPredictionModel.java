@@ -19,6 +19,5 @@ public class DTODemandPredictionModel {
     Integer ignorePeriods;
     //Ix
     Integer length;
-    Integer count;
     Integer expectedDemand;
 }

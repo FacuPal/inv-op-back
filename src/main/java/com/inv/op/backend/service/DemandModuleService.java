@@ -204,7 +204,6 @@ public class DemandModuleService {
                     break;
                 case "Ix":
                     dto.setLength(((IxDemandPredictionModel)demandPredictionModel).getLength());
-                    dto.setCount(((IxDemandPredictionModel)demandPredictionModel).getCount());
                     dto.setExpectedDemand(((IxDemandPredictionModel)demandPredictionModel).getExpectedDemand());
                     break;
                 default:
