@@ -111,6 +111,8 @@ public class SaleModuleService {
             throw new RuntimeException(e);
         }
 
+        //TODO: Agregar validación de familia de producto. Si es lote fijo o intervalo fijo.
+        
         if (product.lessThanOrderLimit()) {
             createNewPurchaseOrder(product);
         }
