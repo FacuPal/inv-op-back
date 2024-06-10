@@ -1,11 +1,15 @@
 package com.inv.op.backend.service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.management.RuntimeErrorException;
 import javax.swing.text.html.Option;
 
 import org.modelmapper.ModelMapper;
@@ -20,10 +24,11 @@ import com.inv.op.backend.error.purchaseOrder.PurchaseOrderSaveError;
 import com.inv.op.backend.error.sale.NewSaleSaveError;
 import com.inv.op.backend.error.sale.SaleNotFoundError;
 import com.inv.op.backend.error.sale.SaleSaveError;
+import com.inv.op.backend.model.HistoricDemand;
 import com.inv.op.backend.model.Product;
-import com.inv.op.backend.model.ProductFamily;
 import com.inv.op.backend.model.PurchaseOrder;
 import com.inv.op.backend.model.Sale;
+import com.inv.op.backend.repository.HistoricDemandRepository;
 import com.inv.op.backend.repository.ProductFamilyRepository;
 import com.inv.op.backend.repository.ProductRepository;
 import com.inv.op.backend.repository.PurchaseOrderRepository;
@@ -43,6 +48,9 @@ public class SaleModuleService {
 
     @Autowired
     PurchaseOrderRepository purchaseOrderRepository;
+
+    @Autowired
+    HistoricDemandRepository historicDemandRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -88,9 +96,10 @@ public class SaleModuleService {
             throw new ProductStockNotEnough();
         }
 
-        // Se reduce stock
-        product.reduceStock(requestBody.getQuantity());
-        productRepository.save(product);
+
+
+        updateProductAndDemand(requestBody.getQuantity(), product);
+
 
         Sale sale = modelMapper.map(requestBody, Sale.class);
         sale.setProduct(product);
@@ -148,6 +157,35 @@ public class SaleModuleService {
             throw new PurchaseOrderSaveError();
         }
         
+
+    }
+
+    private void updateProductAndDemand(Integer quantity, Product product){
+
+        // Se reduce stock
+        product.reduceStock(quantity);
+        productRepository.save(product);
+        
+
+        LocalDate currentDate = LocalDate.now();
+        Integer year = currentDate.getYear();
+        Integer month = currentDate.getMonthValue();
+
+        Optional<HistoricDemand> optHistoricDemand = historicDemandRepository.findByProductAndYearAndMonth(product, year, month);
+
+        HistoricDemand historicDemand;
+
+        if (!optHistoricDemand.isPresent()) {
+            historicDemand = new HistoricDemand();
+            historicDemand.setYear(year);
+            historicDemand.setMonth(month);
+            historicDemand.setProduct(product);
+            historicDemand.setQuantity(quantity);
+        } else {
+            historicDemand = optHistoricDemand.get().addDemand(quantity);
+        }
+
+        historicDemandRepository.save(historicDemand);
 
     }
 

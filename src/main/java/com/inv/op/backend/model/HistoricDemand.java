@@ -52,4 +52,13 @@ public class HistoricDemand {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    public HistoricDemand addDemand(Integer demand){
+        quantity += demand;
+        return this;
+    }
+
+    public HistoricDemand reduceDemand(Integer demand){
+        quantity -= demand;
+        return this;
+    }
 }
