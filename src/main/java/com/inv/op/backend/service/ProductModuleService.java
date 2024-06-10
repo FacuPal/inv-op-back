@@ -1,7 +1,10 @@
 package com.inv.op.backend.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.inv.op.backend.dto.DTOProductoLista;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -75,7 +78,11 @@ public class ProductModuleService {
 
         return product;
     }
-
+    public List<DTOProductoLista> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(DTOProductoLista::new)
+                .collect(Collectors.toList());
+    }
     // Suppliers Services
     public SupplierDto getSupplier(Long id) {
 
@@ -86,6 +93,12 @@ public class ProductModuleService {
         }
 
         return supplier.get();
+    }
+    public DTOProductoLista getDTOProductoLista(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundError());
+
+        return new DTOProductoLista(product);
     }
 
 }

@@ -1,8 +1,10 @@
 package com.inv.op.backend.controller;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 
+import com.inv.op.backend.dto.DTOProductoLista;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,11 @@ public class ProductModuleController {
     public Optional<ProductDto> getProduct(@PathVariable Long id) throws ProductNotFoundError {
         return productModuleService.getProduct(id);
     }
+    @GetMapping(path = "/product/{id}/dto", produces = "application/json")
+    public ResponseEntity<DTOProductoLista> getDTOProductoLista(@PathVariable Long id) {
+        DTOProductoLista dtoProducto = productModuleService.getDTOProductoLista(id);
+        return ResponseEntity.ok(dtoProducto);
+    }
 
     @PostMapping(path = "/product")
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -45,6 +52,11 @@ public class ProductModuleController {
     @GetMapping(path = "/supplier/{id}", produces = "application/json")
     public SupplierDto getSupplier(@PathVariable Long id) throws SupplierNotFoundError {
         return productModuleService.getSupplier(id);
+    }
+    @GetMapping(path = "/product", produces = "application/json")
+    public ResponseEntity<List<DTOProductoLista>> getAllProducts() {
+        List<DTOProductoLista> products = productModuleService.getAllProducts();
+        return ResponseEntity.ok(products);
     }
 
 }
