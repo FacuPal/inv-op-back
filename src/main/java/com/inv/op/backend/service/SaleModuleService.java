@@ -111,7 +111,9 @@ public class SaleModuleService {
             throw new RuntimeException(e);
         }
 
-        if (product.lessThanSafeStock()) {
+        //TODO: Agregar validación de familia de producto. Si es lote fijo o intervalo fijo.
+        
+        if (product.lessThanOrderLimit()) {
             createNewPurchaseOrder(product);
         }
 
@@ -137,13 +139,15 @@ public class SaleModuleService {
     }
 
     private void createNewPurchaseOrder(Product product) {
-        
+
         Collection<PurchaseOrder> openPurchaseOrder = purchaseOrderRepository.findByPurchaseOrderStatusAndProductProductId(PurchaseOrderStatusEnum.OPEN, product.getProductId());
 
         if (!openPurchaseOrder.isEmpty()){
             //Ya hay una orden abierta para el producto.
             return;
         }
+
+        //TODO: Poner la cantidad de orden 
 
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
         newPurchaseOrder.setProduct(product);

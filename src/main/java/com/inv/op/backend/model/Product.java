@@ -66,5 +66,5 @@ public class Product {
 
     public void reduceStock(Integer reduceStock){stock -= reduceStock;}
 
-    public Boolean lessThanSafeStock() { return stock <= safeStock;  }
+    public Boolean lessThanOrderLimit() { return stock <= orderLimit;  }
 }
