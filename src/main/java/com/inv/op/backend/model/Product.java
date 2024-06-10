@@ -65,4 +65,6 @@ public class Product {
     public Boolean existStock(Integer checkStock) { return stock >=  checkStock; }
 
     public void reduceStock(Integer reduceStock){stock -= reduceStock;}
+
+    public Boolean lessThanSafeStock() { return stock <= safeStock;  }
 }
