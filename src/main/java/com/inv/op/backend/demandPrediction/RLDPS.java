@@ -7,6 +7,7 @@ import com.inv.op.backend.dto.DTODemandResults;
 import com.inv.op.backend.model.*;
 import com.inv.op.backend.repository.DemandPredictionModelRepository;
 import com.inv.op.backend.repository.DemandPredictionModelTypeRepository;
+import com.inv.op.backend.repository.ParameterRepository;
 import org.antlr.v4.runtime.tree.Tree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,9 @@ public class RLDPS implements DemandPredictionStrategy {
 
     @Autowired
     private ErrorCalculationSingleton errorCalculationSingleton;
+
+    @Autowired
+    ParameterRepository parameterRepository;
 
     @Override
     public String getType() {
@@ -71,7 +75,12 @@ public class RLDPS implements DemandPredictionStrategy {
     public Collection<DTODemandPredictionPeriod> predict(DTODemandResults result, DTODemandPredictionModel model) throws Exception {
         Collection<DTODemandPredictionPeriod> periods = new ArrayList<>();
         Integer ignore = model.getIgnorePeriods();
-        Integer predict = 3;
+        Integer predict;
+        try {
+            predict = Integer.valueOf(parameterRepository.findByParameterNameIgnoreCase("PERIODOS_A_PREDECIR").getParameterValue());
+        } catch (NumberFormatException nfe) {
+            throw new Exception("Número de periodos a predecir no válido");
+        }
 
         Integer sumX = 0;
         Integer sumY = 0;

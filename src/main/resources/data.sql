@@ -1,6 +1,13 @@
 /*CREATE DATABASE db_inv_op;*/
 use db_inv_op;
 
+/*Parameters*/
+INSERT INTO parameter (parameter_name, parameter_value, is_deleted)
+VALUES
+("PERIODOS_A_PREDECIR", "3", 0),
+("METODO_CALCULO_ERROR", "MAD", 0),
+("ERROR_ACEPTABLE", "0.5", 0);
+
 /*Suppliers*/
 INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Supplier 1", 15, 0);
 INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Supplier 2", 2, 0);
@@ -88,14 +95,14 @@ INSERT INTO `demand_prediction_model_type` (`is_deleted`, `demand_prediction_mod
 
 /*Demand Prediction Model*/
 INSERT INTO `demand_prediction_model` (`alpha`, `expected_demand`, `ignore_periods`, `is_deleted`, `length`, `root`, `demand_prediction_model_id`, `demand_prediction_model_product_family_id`, `demand_prediction_model_product_id`, `demand_prediction_model_type_id`, `demand_prediction_model_color`, `dtype`, `pmp_demand_prediction_model_ponderations`) VALUES
-(NULL, NULL, NULL, b'0', NULL, NULL, 1, NULL, 2, 1, 'blue', 'PMP', '1;2;3'),
-(NULL, NULL, NULL, b'0', NULL, NULL, 2, NULL, 2, 1, 'cyan', 'PMP', '1;1;1'),
-(0.9, NULL, NULL, b'0', NULL, 9, 3, NULL, 2, 2, 'orange', 'PMSE', NULL),
-(0.1, NULL, NULL, b'0', NULL, 11, 4, NULL, 2, 2, 'red', 'PMSE', NULL),
-(NULL, NULL, 0, b'0', NULL, NULL, 5, NULL, 2, 3, 'green', 'RL', NULL),
-(NULL, NULL, 2, b'0', NULL, NULL, 6, NULL, 2, 3, 'darkgreen', 'RL', NULL),
-(NULL, 70, NULL, b'0', 3, NULL, 7, NULL, 2, 4, 'coral', 'Ix', NULL),
-(NULL, 30, NULL, b'0', 4, NULL, 8, NULL, 3, 4, 'purple', 'Ix', NULL),
-(NULL, NULL, 0, b'0', NULL, NULL, 9, NULL, 3, 3, 'red', 'RL', NULL),
-(NULL, NULL, NULL, b'0', NULL, NULL, 10, NULL, 3, 1, 'green', 'PMP', '1;1;1;1'),
-(0.9, NULL, NULL, b'0', NULL, 7.5, 11, NULL, 3, 2, 'blue', 'PMSE', NULL);
+(NULL, NULL, NULL, b'0', NULL, NULL, 1, NULL, 2, 1, '#0000FF', 'PMP', '1;2;3'),
+(NULL, NULL, NULL, b'0', NULL, NULL, 2, NULL, 2, 1, '#00ffff', 'PMP', '1;1;1'),
+(0.9, NULL, NULL, b'0', NULL, 9, 3, NULL, 2, 2, '#ffa500', 'PMSE', NULL),
+(0.1, NULL, NULL, b'0', NULL, 11, 4, NULL, 2, 2, '#ff0000', 'PMSE', NULL),
+(NULL, NULL, 0, b'0', NULL, NULL, 5, NULL, 2, 3, '#008000', 'RL', NULL),
+(NULL, NULL, 2, b'0', NULL, NULL, 6, NULL, 2, 3, '#006400', 'RL', NULL),
+(NULL, 70, NULL, b'0', 3, NULL, 7, NULL, 2, 4, '#ff7f50', 'Ix', NULL),
+(NULL, 30, NULL, b'0', 4, NULL, 8, NULL, 3, 4, '#800080', 'Ix', NULL),
+(NULL, NULL, 0, b'0', NULL, NULL, 9, NULL, 3, 3, '#ff0000', 'RL', NULL),
+(NULL, NULL, NULL, b'0', NULL, NULL, 10, NULL, 3, 1, '#008000', 'PMP', '1;1;1;1'),
+(0.9, NULL, NULL, b'0', NULL, 7.5, 11, NULL, 3, 2, '#0000FF', 'PMSE', NULL);
