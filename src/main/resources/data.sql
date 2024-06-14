@@ -16,13 +16,13 @@ INSERT INTO inventory_model (inventory_model_name,is_deleted) VALUES ("Lote Fijo
 INSERT INTO product_family (product_family_name, is_deleted, supplier_id, inventory_model_id) VALUES ("Family1", 0, 1, 1),("Family2", 0, 1, 1);
 
 /*Product*/
-INSERT INTO product (product_name ,product_family_id ,stock) 
+INSERT INTO product (product_name ,product_family_id ,stock,safe_stock) 
 values 
-	("Articulo 1",1, 1),
-	("Articulo 2", 2, 3),
-	("Articulo 3", 2, 3),
-	("Articulo 4", 2, 5),
-	("Articulo 5", 1, 6);
+	("Articulo 1",1, 3,2),
+	("Articulo 2", 2, 3,2),
+	("Articulo 3", 2, 3,2),
+	("Articulo 4", 2, 5,2),
+	("Articulo 5", 1, 6,2);
 
 /*Sale*/
 INSERT INTO sale (customer_name, sale_date, product_id, quantity)
@@ -32,6 +32,13 @@ VALUES
 	("Facundo", "2024-05-31", 1, 10),
 	("Facundo", "2024-05-30", 1, 10),
 	("Facundo", "2024-05-02", 3, 10);
+
+/*PurchaseOrderStatus*/
+INSERT INTO purchase_order(product_id, purchase_order_date, supplier_id, purchase_order_status) 
+VALUES 
+	(1, '2024-06-09', 1, 'OPEN'),
+	(1, '2024-06-09', 1, 'OPEN'),
+	(1, '2024-06-09', 2, 'OPEN');
 
 /*Historic Demand*/
 INSERT INTO `historic_demand` (`month`, `quantity`, `year`, `historic_demand_id`, `product_id`) VALUES

@@ -10,6 +10,7 @@ public class SaleDto {
     private Long saleId;
     private String customerName;
     private Long productId;
+    private String productName;
     private Integer quantity;
     private Date saleDate;
     

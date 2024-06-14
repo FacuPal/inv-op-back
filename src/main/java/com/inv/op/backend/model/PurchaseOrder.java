@@ -1,9 +1,12 @@
 package com.inv.op.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.inv.op.backend.enums.PurchaseOrderStatusEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,10 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
-
+@NoArgsConstructor
 @Entity
 @Data
 @Table(name = "purchase_order")
@@ -30,10 +35,11 @@ public class PurchaseOrder {
     @JsonProperty(value = "purchaseOrderDate")
     private Date purchaseOrderDate;
 
-    @ManyToOne
-    @JoinColumn(name = "purchase_order_status_id", nullable = false, referencedColumnName = "purchase_order_status_id", foreignKey = @ForeignKey(name = "FK_purchase_order_purchase_order_status"))
+    // @ManyToOne
+    // @JoinColumn(name = "purchase_order_status_id", nullable = false, referencedColumnName = "purchase_order_status_id", foreignKey = @ForeignKey(name = "FK_purchase_order_purchase_order_status"))
+    @Enumerated(EnumType.STRING)
     @JsonProperty(value = "orderStatus")
-    private PurchaseOrderStatus purchaseOrderStatus;
+    private PurchaseOrderStatusEnum purchaseOrderStatus;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "product_id", foreignKey = @ForeignKey(name = "FK_purchase_order_product"))
