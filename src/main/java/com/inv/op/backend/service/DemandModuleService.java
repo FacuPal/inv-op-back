@@ -27,6 +27,9 @@ public class DemandModuleService {
     private ProductFamilyRepository productFamilyRepository;
 
     @Autowired
+    private NextPeriodPredictionRepository nextPeriodPredictionRepository;
+
+    @Autowired
     private DemandPredictionModelRepository demandPredictionModelRepository;
 
     @Autowired
@@ -269,6 +272,31 @@ public class DemandModuleService {
         Integer currMonth = calendar.get(Calendar.MONTH);
         Integer currYear = calendar.get(Calendar.YEAR);
 
+        DTONextPeriodDemand npd = DTONextPeriodDemand.builder().build();
+
+        if (predecirMesActual) {
+            npd.setMonth(currMonth + 1);
+            npd.setYear(currYear);
+        } else {
+            npd.setMonth((currMonth + 1) % 12 + 1);
+            npd.setYear(currMonth == 11 ? currYear + 1 : currYear);
+        }
+
+        if (!family) {
+            Optional<Product> optionalProduct = productRepository.findById(id);
+            if(optionalProduct.isEmpty()) throw new Exception("No se encontró el producto");
+            Product product = optionalProduct.get();
+            Optional<NextPeriodPrediction> optionalNextPeriodPrediction = nextPeriodPredictionRepository.findByProductAndMonthAndYear(product, npd.getMonth(), npd.getYear());
+            if(optionalNextPeriodPrediction.isPresent()) {
+                NextPeriodPrediction nextPeriodPrediction = optionalNextPeriodPrediction.get();
+                npd.setQuantity(nextPeriodPrediction.getQuantity());
+                npd.setModel(null);
+            }
+        }
+
+        ret.setNextPeriodDemand(npd);
+
+
         calendar.add(Calendar.MONTH, cantPeriodosAPredecir);
         if(predecirMesActual) calendar.add(Calendar.MONTH, -1);
         Date limite = calendar.getTime();
@@ -343,5 +371,31 @@ public class DemandModuleService {
         }
         errorAceptable.setParameterValue(auxDouble.toString());
         parameterRepository.save(errorAceptable);
+    }
+
+    public void setExpectedNextPeriodDemand(DTONextPeriodDemand dto) throws Exception {
+        if(dto.getModel() == null ) throw new Exception("No se especificó el modelo");
+        Optional<DemandPredictionModel> optionalDemandPredictionModel = demandPredictionModelRepository.findById(dto.getModel());
+        if(optionalDemandPredictionModel.isEmpty()) throw new Exception("No se encontró el modelo");
+        DemandPredictionModel dpm = optionalDemandPredictionModel.get();
+
+        Optional<NextPeriodPrediction> optionalNextPeriodPrediction = nextPeriodPredictionRepository.findByProductAndMonthAndYear(dpm.getProduct(), dto.getMonth(), dto.getYear());
+        NextPeriodPrediction npp;
+        if(optionalNextPeriodPrediction.isEmpty()) {
+            npp = new NextPeriodPrediction();
+            npp.setMonth(dto.getMonth());
+            npp.setYear(dto.getYear());
+            npp.setQuantity(dto.getQuantity());
+            npp.setDemandPredictionModel(dpm);
+            npp.setProduct(dpm.getProduct());
+            nextPeriodPredictionRepository.save(npp);
+        } else {
+            npp = optionalNextPeriodPrediction.get();
+            npp.setQuantity(dto.getQuantity());
+            nextPeriodPredictionRepository.save(npp);
+        }
+
+
+
     }
 }
