@@ -2,8 +2,10 @@ package com.inv.op.backend.dto;
 
 import java.io.Serializable;
 
+import com.inv.op.backend.model.InventoryModel;
 import com.inv.op.backend.model.Product;
 
+import com.inv.op.backend.model.ProductFamily;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +24,8 @@ public class DTOProductoLista implements Serializable {
         this.safeStock= product.getSafeStock();
         this.optimalBatch=product.getOptimalBatch();
         this.orderLimit=product.getOrderLimit();
-
+        this.isDeleted=product.getIsDeleted();
+        this.productFamilyId=product.getProductFamily().getProductFamilyId();
     }
 
     private Long productId;
@@ -34,5 +37,6 @@ public class DTOProductoLista implements Serializable {
     private Integer safeStock;
     private Integer orderLimit;
     private Integer optimalBatch;
-
+    private Boolean isDeleted;
+    private Long productFamilyId;
 }

@@ -4,14 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.inv.op.backend.dto.DTOProductoLista;
+import com.inv.op.backend.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import com.inv.op.backend.dto.CreateProductRequest;
-import com.inv.op.backend.dto.ProductDto;
-import com.inv.op.backend.dto.SupplierDto;
 import com.inv.op.backend.error.product.ProductFamilyNotFound;
 import com.inv.op.backend.error.product.ProductNotFoundError;
 import com.inv.op.backend.error.product.ProductSaveError;
@@ -100,5 +97,66 @@ public class ProductModuleService {
 
         return new DTOProductoLista(product);
     }
+    public Product updateProduct(Long id, CreateProductRequest updatedProduct) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundError());
+
+        product.setProductName(updatedProduct.getProductName());
+        product.setProductDescription(updatedProduct.getProductDescription());
+        product.setOptimalBatch(updatedProduct.getOptimalBatch());
+        product.setStock(updatedProduct.getStock());
+        product.setOrderLimit(updatedProduct.getOrderLimit());
+        product.setSafeStock(updatedProduct.getSafeStock());
+
+        if (!product.getProductFamily().getProductFamilyId().equals(updatedProduct.getProductFamilyId())) {
+            ProductFamily productFamily = productFamilyRepository.findById(updatedProduct.getProductFamilyId())
+                    .orElseThrow(() -> new ProductFamilyNotFound());
+            product.setProductFamily(productFamily);
+        }
+
+        try {
+            productRepository.save(product);
+        } catch (Exception e) {
+            throw new ProductSaveError();
+        }
+        return product;
+    }
+
+    public List<ProductoFamiliaDto> getAllProductFamilies() {
+        return productFamilyRepository.findAll().stream()
+                .map(family -> new ProductoFamiliaDto(family.getProductFamilyId(), family.getProductFamilyName()))
+                .collect(Collectors.toList());
+    }
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundError());
+
+        // Setear el flag de eliminado en true en lugar de borrar físicamente
+        product.setIsDeleted(true);
+
+        try {
+            productRepository.save(product);
+        } catch (Exception e) {
+            throw new ProductSaveError();
+        }
+    }
+    public void restoreProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundError());
+
+        // Solo restaurar si el producto está marcado como eliminado
+        if (product.getIsDeleted()) {
+            product.setIsDeleted(false);
+
+            try {
+                productRepository.save(product);
+            } catch (Exception e) {
+                throw new ProductSaveError();
+            }
+        } else {
+            // Podrías lanzar una excepción o manejar el caso cuando el producto no está marcado como eliminado
+            throw new RuntimeException("El producto no está marcado como eliminado.");
+        }
+    }
+
 
 }

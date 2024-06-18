@@ -4,21 +4,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-import com.inv.op.backend.dto.DTOProductoLista;
+import com.inv.op.backend.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.inv.op.backend.dto.CreateProductRequest;
-import com.inv.op.backend.dto.ProductDto;
-import com.inv.op.backend.dto.SupplierDto;
 import com.inv.op.backend.error.product.ProductNotFoundError;
 import com.inv.op.backend.error.product.ProductSaveError;
 import com.inv.op.backend.error.supplier.SupplierNotFoundError;
@@ -58,5 +49,29 @@ public class ProductModuleController {
         List<DTOProductoLista> products = productModuleService.getAllProducts();
         return ResponseEntity.ok(products);
     }
+    @PutMapping(path = "/product/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<Serializable> updateProduct(@PathVariable Long id, @RequestBody CreateProductRequest updatedProduct) throws ProductNotFoundError, ProductSaveError {
+        productModuleService.updateProduct(id, updatedProduct);
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping(path = "/productFamilies", produces = "application/json")
+    public ResponseEntity<List<ProductoFamiliaDto>> getAllProductFamilies() {
+        List<ProductoFamiliaDto> productFamilies = productModuleService.getAllProductFamilies();
+        return ResponseEntity.ok(productFamilies);
+    }
+    @DeleteMapping(path = "/product/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        productModuleService.deleteProduct(id);
+        return ResponseEntity.ok("Product deleted successfully");
+    }
+
+    @PatchMapping(path = "/product/{id}/restore")
+    public ResponseEntity<String> restoreProduct(@PathVariable Long id) {
+        productModuleService.restoreProduct(id);
+        return ResponseEntity.ok("Product restored successfully");
+    }
+
 
 }
