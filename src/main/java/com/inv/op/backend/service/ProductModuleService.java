@@ -1,10 +1,12 @@
 package com.inv.op.backend.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.inv.op.backend.dto.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -31,6 +33,9 @@ public class ProductModuleService {
     InventoryModelRepository inventoryModelRepository;
     @Autowired
     SupplierRepository supplierRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
 
@@ -63,6 +68,13 @@ public class ProductModuleService {
         // return new DefaultResponseDto(HttpStatus.CREATED, "Product Created");
         return newProduct;
 
+    }
+    public Collection<ProductDto> getProductList() throws ProductNotFoundError {
+
+        return productRepository.findAll()
+                .stream()
+                .map(product -> modelMapper.map(product, ProductDto.class))
+                .toList();
     }
 
     public Optional<ProductDto> getProduct(Long id) {
@@ -130,7 +142,6 @@ public class ProductModuleService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundError());
 
-        // Setear el flag de eliminado en true en lugar de borrar físicamente
         product.setIsDeleted(true);
 
         try {
@@ -153,7 +164,6 @@ public class ProductModuleService {
                 throw new ProductSaveError();
             }
         } else {
-            // Podrías lanzar una excepción o manejar el caso cuando el producto no está marcado como eliminado
             throw new RuntimeException("El producto no está marcado como eliminado.");
         }
     }
