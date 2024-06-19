@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 import com.inv.op.backend.dto.*;
 import com.inv.op.backend.enums.PurchaseOrderStatusEnum;
 import com.inv.op.backend.model.PurchaseOrder;
 import com.inv.op.backend.repository.*;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,16 +43,19 @@ public class ProductModuleService {
     SupplierRepository supplierRepository;
     @Autowired
     private ModelMapper modelMapper;
+
     @Autowired
     PurchaseOrderRepository purchaseOrderRepository;
 
 
+
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
 
-        ProductFamily productFamily = productFamilyRepository.findById(newProduct.getProductFamilyId()).orElseThrow(() -> new ProductFamilyNotFound());
+        ProductFamily productFamily = productFamilyRepository.findById(newProduct.getProductFamilyId())
+                .orElseThrow(() -> new ProductFamilyNotFound());
 
         // if (!productFamily.isPresent()) {
-        //     throw new ProductFamilyNotFound();
+        // throw new ProductFamilyNotFound();
         // }
 
         // Product(Long id, String name, String description, ProductFamily
@@ -83,6 +88,14 @@ public class ProductModuleService {
                 .stream()
                 .map(product -> modelMapper.map(product, ProductDto.class))
                 .toList();
+    }
+
+    public Collection<ProductDto> getProductList() throws ProductNotFoundError {
+
+        return productRepository.findAll()
+        .stream()
+        .map(product -> modelMapper.map(product, ProductDto.class))
+        .toList();
     }
 
     public Optional<ProductDto> getProduct(Long id) {

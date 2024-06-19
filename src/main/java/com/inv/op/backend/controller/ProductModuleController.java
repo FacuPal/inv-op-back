@@ -2,6 +2,7 @@ package com.inv.op.backend.controller;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Collection;
 
@@ -51,7 +52,7 @@ public class ProductModuleController {
 
     @PostMapping(path = "/product")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<Serializable> saveProduct(@RequestBody CreateProductRequest product) throws ProductSaveError {
+    public ResponseEntity<?> saveProduct(@RequestBody CreateProductRequest product) throws ProductSaveError {
         return ResponseEntity.ok().body(productModuleService.saveProduct(product));
     }
 
