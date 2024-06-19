@@ -6,6 +6,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.inv.op.backend.dto.*;
+import com.inv.op.backend.enums.PurchaseOrderStatusEnum;
+import com.inv.op.backend.model.PurchaseOrder;
+import com.inv.op.backend.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,10 +20,6 @@ import com.inv.op.backend.error.product.ProductSaveError;
 import com.inv.op.backend.error.supplier.SupplierNotFoundError;
 import com.inv.op.backend.model.Product;
 import com.inv.op.backend.model.ProductFamily;
-import com.inv.op.backend.repository.InventoryModelRepository;
-import com.inv.op.backend.repository.ProductFamilyRepository;
-import com.inv.op.backend.repository.ProductRepository;
-import com.inv.op.backend.repository.SupplierRepository;
 
 @Service
 public class ProductModuleService {
@@ -35,6 +34,8 @@ public class ProductModuleService {
     SupplierRepository supplierRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    PurchaseOrderRepository purchaseOrderRepository;
 
 
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
@@ -141,6 +142,12 @@ public class ProductModuleService {
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundError());
+
+        // Verificar el estado de las órdenes de compra
+        Collection<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findByPurchaseOrderStatusAndProductProductId(PurchaseOrderStatusEnum.OPEN, id);
+        if (!purchaseOrders.isEmpty()) {
+            throw new RuntimeException("No se puede eliminar el producto porque tiene orden/s de compra abierta/s.");
+        }
 
         product.setIsDeleted(true);
 

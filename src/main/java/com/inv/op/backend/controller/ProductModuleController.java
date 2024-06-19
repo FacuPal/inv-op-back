@@ -79,8 +79,12 @@ public class ProductModuleController {
     @DeleteMapping(path = "/product/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
-        productModuleService.deleteProduct(id);
-        return ResponseEntity.ok("Product deleted successfully");
+        try {
+            productModuleService.deleteProduct(id);
+            return ResponseEntity.ok("Product deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PatchMapping(path = "/product/{id}/restore")
