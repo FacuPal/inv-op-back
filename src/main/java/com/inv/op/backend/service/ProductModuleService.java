@@ -20,6 +20,13 @@ import com.inv.op.backend.error.product.ProductSaveError;
 import com.inv.op.backend.error.supplier.SupplierNotFoundError;
 import com.inv.op.backend.model.Product;
 import com.inv.op.backend.model.ProductFamily;
+import com.inv.op.backend.dto.CreateProductRequest;
+import com.inv.op.backend.dto.ProductDto;
+import com.inv.op.backend.dto.SupplierDto;
+import com.inv.op.backend.repository.InventoryModelRepository;
+import com.inv.op.backend.repository.ProductFamilyRepository;
+import com.inv.op.backend.repository.ProductRepository;
+import com.inv.op.backend.repository.SupplierRepository;
 
 @Service
 public class ProductModuleService {
