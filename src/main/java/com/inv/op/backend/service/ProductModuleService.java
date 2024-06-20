@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.swing.text.html.Option;
+
 import com.inv.op.backend.dto.*;
 import com.inv.op.backend.enums.PurchaseOrderStatusEnum;
 import com.inv.op.backend.model.PurchaseOrder;
@@ -175,6 +177,19 @@ public class ProductModuleService {
             throw new RuntimeException("El producto no está marcado como eliminado.");
         }
     }
+    public Collection<SupplierDto> getSupplierList() {
+        return supplierRepository.findAll()
+            .stream()
+            .map(supplier -> modelMapper.map(supplier, SupplierDto.class))
+            .toList();
+    }
+    public SupplierDto getDefaultSupplier(Long id) {
+        Optional<Product> optProduct = productRepository.findById(id);
 
+        if(!optProduct.isPresent()){
+            throw new ProductNotFoundError();
+        }
 
+        return modelMapper.map(optProduct.get().getProductFamily().getSupplier(), SupplierDto.class);
+    }
 }

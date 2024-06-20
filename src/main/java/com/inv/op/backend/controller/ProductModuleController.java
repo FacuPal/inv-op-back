@@ -1,11 +1,8 @@
 package com.inv.op.backend.controller;
 
 import java.io.Serializable;
-<<<<<<< HEAD
 import java.util.Collection;
-=======
 import java.util.List;
->>>>>>> 22d653072f0e03b5fa6b9115d3a786e192667ffb
 import java.util.Optional;
 
 import com.inv.op.backend.dto.*;
@@ -18,17 +15,8 @@ import com.inv.op.backend.error.product.ProductNotFoundError;
 import com.inv.op.backend.error.product.ProductSaveError;
 import com.inv.op.backend.error.supplier.SupplierNotFoundError;
 import com.inv.op.backend.service.ProductModuleService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.inv.op.backend.dto.CreateProductRequest;
-import com.inv.op.backend.dto.ProductDto;
-import com.inv.op.backend.dto.SupplierDto;
+import jakarta.websocket.server.PathParam;
 
 
 @RestController
@@ -43,10 +31,7 @@ public class ProductModuleController {
     public ResponseEntity<?> getProductList() throws ProductNotFoundError {
         return ResponseEntity.ok(productModuleService.getProductList());
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> 22d653072f0e03b5fa6b9115d3a786e192667ffb
     @GetMapping(path = "/product/{id}", produces = "application/json")
     public Optional<ProductDto> getProduct(@PathVariable Long id) throws ProductNotFoundError {
         return productModuleService.getProduct(id);
@@ -63,11 +48,24 @@ public class ProductModuleController {
         return ResponseEntity.ok().body(productModuleService.saveProduct(product));
     }
 
+    @GetMapping(path = "/product/{id}/defaultSupplier")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<?> getDefaultSupplier(@PathVariable Long id) throws RuntimeException {
+        return ResponseEntity.ok().body(productModuleService.getDefaultSupplier(id));
+    }
+
+
     // Supplier Endpoints
     @GetMapping(path = "/supplier/{id}", produces = "application/json")
     public SupplierDto getSupplier(@PathVariable Long id) throws SupplierNotFoundError {
         return productModuleService.getSupplier(id);
     }
+
+    @GetMapping(path = "/supplier", produces = "application/json")
+    public ResponseEntity<?> getSupplierList(){
+        return ResponseEntity.ok().body(productModuleService.getSupplierList());
+    }
+
     @GetMapping(path = "/product", produces = "application/json")
     public ResponseEntity<List<DTOProductoLista>> getAllProducts() {
         List<DTOProductoLista> products = productModuleService.getAllProducts();

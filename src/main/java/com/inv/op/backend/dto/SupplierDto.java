@@ -1,10 +1,23 @@
 package com.inv.op.backend.dto;
 
-public interface SupplierDto {
+import java.util.Date;
 
-    Long getSupplierId();
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+// public interface SupplierDto {
+
+//     Long getSupplierId();
     
-    String getSupplierName();
+//     String getSupplierName();
 
-    String getSupplierDeliveryTime();
+//     String getSupplierDeliveryTime();
+// }
+public class SupplierDto {
+
+    private Long supplierId;
+    private String supplierName;
+    private Integer supplierDeliveryTime;
 }
