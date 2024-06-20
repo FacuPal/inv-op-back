@@ -40,5 +40,9 @@ public class PurchaseOrderModuleService {
         return modelMapper.map(purchaseOrder.get(), PurchaseOrderDto.class);
 
     }
+
+    //TODO: Agregar proceso para calcular ordenes de compra de intervalo fijo. 
+
+    
     
 }
