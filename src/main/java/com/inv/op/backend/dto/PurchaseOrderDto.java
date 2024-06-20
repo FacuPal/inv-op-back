@@ -14,4 +14,5 @@ public class PurchaseOrderDto {
     private String purchaseOrderStatus;
     private Long supplierId;
     private String supplierName;
+    private Integer orderQuantity;
 }

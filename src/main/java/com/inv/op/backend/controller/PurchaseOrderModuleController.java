@@ -5,12 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inv.op.backend.dto.PurchaseOrderDto;
 import com.inv.op.backend.service.PurchaseOrderModuleService;
-
-import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/purchasOrderModule")
@@ -24,9 +24,16 @@ public class PurchaseOrderModuleController {
         return ResponseEntity.ok(purchaseOrderModuleService.getPurchaseOrderList());
     }
 
+    @PostMapping(path = "/purchaseOrder")
+    public ResponseEntity<?> createPurchaseOrder(@RequestBody PurchaseOrderDto newPurchaseOrder ) {
+        return ResponseEntity.ok(purchaseOrderModuleService.createPurchaseOrder(newPurchaseOrder));
+    }
+
     @GetMapping(path = "/purchaseOrder/{purchaseOrderId}")
     public ResponseEntity<?> getPurchaseOrder(@PathVariable Long purchaseOrderId) {
         return ResponseEntity.ok(purchaseOrderModuleService.getPurchaseOrder(purchaseOrderId));
     }
+
+    
 
 }

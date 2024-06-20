@@ -20,16 +20,16 @@ INSERT INTO inventory_model (inventory_model_name,is_deleted) VALUES ("Lote Fijo
 
 /*Product Family*/
 
-INSERT INTO product_family (product_family_name, is_deleted, supplier_id, inventory_model_id) VALUES ("Family1", 0, 1, 1),("Family2", 0, 1, 1);
+INSERT INTO product_family (product_family_name, is_deleted, supplier_id, inventory_model_id) VALUES ("Family1", 0, 1, 1),("Family2", 0, 2, 2);
 
 /*Product*/
-INSERT INTO product (product_name ,product_family_id ,stock,safe_stock) 
+INSERT INTO product (product_name ,product_family_id ,stock,safe_stock,order_limit,optimal_batch) 
 values 
-	("Articulo 1",1, 3,2),
-	("Articulo 2", 2, 3,2),
-	("Articulo 3", 2, 3,2),
-	("Articulo 4", 2, 5,2),
-	("Articulo 5", 1, 6,2);
+	("Articulo 1",1, 3,2,4,10),
+	("Articulo 2", 2, 4,4,5,15),
+	("Articulo 3", 2, 10,6,8,20),
+	("Articulo 4", 2, 0,5,3,4),
+	("Articulo 5", 1, 15,10,12,50);
 
 /*Sale*/
 INSERT INTO sale (customer_name, sale_date, product_id, quantity)
@@ -41,11 +41,11 @@ VALUES
 	("Facundo", "2024-05-02", 3, 10);
 
 /*PurchaseOrderStatus*/
-INSERT INTO purchase_order(product_id, purchase_order_date, supplier_id, purchase_order_status) 
+INSERT INTO purchase_order(product_id, purchase_order_date, supplier_id, purchase_order_status, order_quantity) 
 VALUES 
-	(1, '2024-06-09', 1, 'OPEN'),
-	(1, '2024-06-09', 1, 'OPEN'),
-	(1, '2024-06-09', 2, 'OPEN');
+	(1, '2024-06-09', 1, 'OPEN',5),
+	(1, '2024-06-09', 1, 'OPEN',10),
+	(1, '2024-06-09', 2, 'OPEN',8);
 
 /*Historic Demand*/
 INSERT INTO `historic_demand` (`month`, `quantity`, `year`, `historic_demand_id`, `product_id`) VALUES
