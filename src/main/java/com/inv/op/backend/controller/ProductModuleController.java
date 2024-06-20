@@ -40,6 +40,7 @@ public class ProductModuleController {
     public ResponseEntity<?> getProductList() throws ProductNotFoundError {
         return ResponseEntity.ok(productModuleService.getProductList());
     }
+
     @GetMapping(path = "/product/{id}", produces = "application/json")
     public Optional<ProductDto> getProduct(@PathVariable Long id) throws ProductNotFoundError {
         return productModuleService.getProduct(id);
@@ -56,11 +57,24 @@ public class ProductModuleController {
         return ResponseEntity.ok().body(productModuleService.saveProduct(product));
     }
 
+    @GetMapping(path = "/product/{id}/defaultSupplier")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<?> getDefaultSupplier(@PathVariable Long id) throws RuntimeException {
+        return ResponseEntity.ok().body(productModuleService.getDefaultSupplier(id));
+    }
+
+
     // Supplier Endpoints
     @GetMapping(path = "/supplier/{id}", produces = "application/json")
     public SupplierDto getSupplier(@PathVariable Long id) throws SupplierNotFoundError {
         return productModuleService.getSupplier(id);
     }
+
+    @GetMapping(path = "/supplier", produces = "application/json")
+    public ResponseEntity<?> getSupplierList(){
+        return ResponseEntity.ok().body(productModuleService.getSupplierList());
+    }
+
     @GetMapping(path = "/product", produces = "application/json")
     public ResponseEntity<List<DTOProductoLista>> getAllProducts() {
         List<DTOProductoLista> products = productModuleService.getAllProducts();

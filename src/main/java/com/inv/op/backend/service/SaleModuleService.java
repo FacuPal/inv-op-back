@@ -96,8 +96,6 @@ public class SaleModuleService {
             throw new ProductStockNotEnough();
         }
 
-
-
         updateProductAndDemand(requestBody.getQuantity(), product);
 
 
@@ -111,9 +109,9 @@ public class SaleModuleService {
             throw new RuntimeException(e);
         }
 
-        //TODO: Agregar validación de familia de producto. Si es lote fijo o intervalo fijo.
-        
-        if (product.lessThanOrderLimit()) {
+
+        //Si el stock bajó del punto de pedido y es lote fijo, creamos el pedido
+        if (product.lessThanOrderLimit() && product.getInventoryModel().toLowerCase().trim().equals("lote fijo")) {
             createNewPurchaseOrder(product);
         }
 
@@ -147,13 +145,14 @@ public class SaleModuleService {
             return;
         }
 
-        //TODO: Poner la cantidad de orden 
-
+        //Se crea una nueva orden para el proveedor de la familia, en estado abierto
+        //Con la fecha de hoy y la cantidad fijada por el lote óptimo
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
         newPurchaseOrder.setProduct(product);
         newPurchaseOrder.setSupplier(product.getProductFamily().getSupplier());
         newPurchaseOrder.setPurchaseOrderStatus(PurchaseOrderStatusEnum.OPEN);
         newPurchaseOrder.setPurchaseOrderDate(Date.from(Instant.now().minus(3, ChronoUnit.HOURS)));
+        newPurchaseOrder.setOrderQuantity(product.getOptimalBatch());
 
         try {
             purchaseOrderRepository.save(newPurchaseOrder);

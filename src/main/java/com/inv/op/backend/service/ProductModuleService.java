@@ -10,7 +10,6 @@ import com.inv.op.backend.dto.*;
 import com.inv.op.backend.enums.PurchaseOrderStatusEnum;
 import com.inv.op.backend.model.PurchaseOrder;
 import com.inv.op.backend.repository.*;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,10 +42,8 @@ public class ProductModuleService {
     SupplierRepository supplierRepository;
     @Autowired
     private ModelMapper modelMapper;
-
     @Autowired
     PurchaseOrderRepository purchaseOrderRepository;
-
 
 
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
@@ -88,14 +85,6 @@ public class ProductModuleService {
                 .stream()
                 .map(product -> modelMapper.map(product, ProductDto.class))
                 .toList();
-    }
-
-    public Collection<ProductDto> getProductList() throws ProductNotFoundError {
-
-        return productRepository.findAll()
-        .stream()
-        .map(product -> modelMapper.map(product, ProductDto.class))
-        .toList();
     }
 
     public Optional<ProductDto> getProduct(Long id) {
@@ -194,6 +183,19 @@ public class ProductModuleService {
             throw new RuntimeException("El producto no está marcado como eliminado.");
         }
     }
+    public Collection<SupplierDto> getSupplierList() {
+        return supplierRepository.findAll()
+            .stream()
+            .map(supplier -> modelMapper.map(supplier, SupplierDto.class))
+            .toList();
+    }
+    public SupplierDto getDefaultSupplier(Long id) {
+        Optional<Product> optProduct = productRepository.findById(id);
 
+        if(!optProduct.isPresent()){
+            throw new ProductNotFoundError();
+        }
 
+        return modelMapper.map(optProduct.get().getProductFamily().getSupplier(), SupplierDto.class);
+    }
 }
