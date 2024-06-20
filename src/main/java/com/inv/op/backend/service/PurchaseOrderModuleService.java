@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.inv.op.backend.dto.PurchaseOrderDto;
 import com.inv.op.backend.enums.PurchaseOrderStatusEnum;
 import com.inv.op.backend.error.product.ProductNotFoundError;
+import com.inv.op.backend.error.purchaseOrder.OpenPurchaseOrderExistsForProduct;
 import com.inv.op.backend.error.purchaseOrder.PurchaseOrderCreateError;
 import com.inv.op.backend.error.purchaseOrder.PurchaseOrderNotFound;
 import com.inv.op.backend.error.supplier.SupplierNotFoundError;
@@ -40,6 +41,7 @@ public class PurchaseOrderModuleService {
 
     public Collection<PurchaseOrderDto> getPurchaseOrderList() {
 
+        // TODO: Agregar filtro por abiertas y cerradas desde el front.
         // Collection<PurchaseOrder> purchaseOrderList= purchaseOrderRepository.findByPurchaseOrderStatusAndProductProductId(PurchaseOrderStatusEnum.OPEN, new Long(1));
         Collection<PurchaseOrder> purchaseOrderList= purchaseOrderRepository.findByPurchaseOrderStatus(PurchaseOrderStatusEnum.OPEN);
         
@@ -63,7 +65,10 @@ public class PurchaseOrderModuleService {
         if (requestBody.getPurchaseOrderId() != null) {
             throw new PurchaseOrderCreateError();
         }
-        //TODO: Agregar validación de si hay una orden de compra abierta para el producto.
+
+        if (!purchaseOrderRepository.findByPurchaseOrderStatusAndProductProductId(PurchaseOrderStatusEnum.OPEN, requestBody.getProductId()).isEmpty()) {
+            throw new OpenPurchaseOrderExistsForProduct();
+        }
 
         Optional<Product> optProduct = productRepository.findById(requestBody.getProductId());
         Optional<Supplier> optSupplier = supplierRepository.findById(requestBody.getSupplierId());
@@ -84,8 +89,6 @@ public class PurchaseOrderModuleService {
 
         return modelMapper.map(purchaseOrderRepository.save(newPurchaseOrder), PurchaseOrderDto.class);
 
-        // TODO Auto-generated method stub
-        // throw new UnsupportedOperationException("Unimplemented method 'createPurchaseOrder'");
     }
 
     //TODO: Agregar proceso para calcular ordenes de compra de intervalo fijo. 
