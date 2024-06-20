@@ -262,7 +262,9 @@ public class DemandModuleService {
         } catch (NumberFormatException nfe) {
             throw new Exception("Número de periodos a predecir no válido");
         }
-        DTODemandResults ret = DTODemandResults.builder().build();
+        DTODemandResults ret = DTODemandResults.builder()
+                .errorAceptable(Double.valueOf(parameterRepository.findByParameterNameIgnoreCase("ERROR_ACEPTABLE").getParameterValue()))
+                .build();
 
         Collection<DTODemandPredictionModel> models = getModels(id, family);
 
