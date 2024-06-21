@@ -16,6 +16,8 @@ import com.inv.op.backend.error.product.ProductNotFoundError;
 import com.inv.op.backend.error.purchaseOrder.OpenPurchaseOrderExistsForProduct;
 import com.inv.op.backend.error.purchaseOrder.PurchaseOrderCreateError;
 import com.inv.op.backend.error.purchaseOrder.PurchaseOrderNotFound;
+import com.inv.op.backend.error.purchaseOrder.PurchaseOrderNotOpen;
+import com.inv.op.backend.error.purchaseOrder.PurchaseOrderSaveError;
 import com.inv.op.backend.error.supplier.SupplierNotFoundError;
 import com.inv.op.backend.model.Product;
 import com.inv.op.backend.model.PurchaseOrder;
@@ -89,6 +91,44 @@ public class PurchaseOrderModuleService {
 
         return modelMapper.map(purchaseOrderRepository.save(newPurchaseOrder), PurchaseOrderDto.class);
 
+    }
+
+    public PurchaseOrderDto closePurchaseOrder(Long purchaseOrderId) {
+        Optional<PurchaseOrder> optPurchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
+
+        if (!optPurchaseOrder.isPresent()) {
+            throw new PurchaseOrderNotFound();
+        }
+
+        PurchaseOrder purchaseOrder = optPurchaseOrder.get();
+
+        if (purchaseOrder.getPurchaseOrderStatus() != PurchaseOrderStatusEnum.OPEN) {
+            throw new PurchaseOrderNotOpen();
+        }
+
+        try {
+            //Se actualiza estado de la orden de compra a cerrada.
+            purchaseOrder.setPurchaseOrderStatus(PurchaseOrderStatusEnum.CLOSED);
+            purchaseOrderRepository.save(purchaseOrder);
+            Optional<Product> optProduct = productRepository.findById(purchaseOrder.getProduct().getProductId());
+
+            if (!optProduct.isPresent()) {
+                throw new ProductNotFoundError();
+            }
+
+            //Se agrega stock de la orden de compra
+            Product product = optProduct.get();
+            product.addStock(purchaseOrder.getOrderQuantity());
+            productRepository.save(product);
+
+
+        } catch (Exception e) {
+            throw new PurchaseOrderSaveError();
+        }
+        
+
+
+        return modelMapper.map(purchaseOrder, PurchaseOrderDto.class);
     }
 
     //TODO: Agregar proceso para calcular ordenes de compra de intervalo fijo. 

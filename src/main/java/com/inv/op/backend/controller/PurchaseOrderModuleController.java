@@ -34,6 +34,11 @@ public class PurchaseOrderModuleController {
         return ResponseEntity.ok(purchaseOrderModuleService.getPurchaseOrder(purchaseOrderId));
     }
 
+    @PostMapping(path = "/purchaseOrder/{purchaseOrderId}/close")
+    public ResponseEntity<?> closePurchaseOrder(@PathVariable Long purchaseOrderId) {
+        return ResponseEntity.ok(purchaseOrderModuleService.closePurchaseOrder(purchaseOrderId));
+    }
+
     
 
 }

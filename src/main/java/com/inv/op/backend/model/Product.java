@@ -69,4 +69,6 @@ public class Product {
     public Boolean lessThanOrderLimit() { return stock <= orderLimit;  }
 
     public String getInventoryModel() { return this.getProductFamily().getInventoryModel().getInventoryModelName();}
+
+    public void addStock(Integer orderQuantity) { stock += orderQuantity; }
 }
