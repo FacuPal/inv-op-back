@@ -43,9 +43,9 @@ public class PurchaseOrderModuleService {
 
     public Collection<PurchaseOrderDto> getPurchaseOrderList() {
 
-        // TODO: Agregar filtro por abiertas y cerradas desde el front.
         // Collection<PurchaseOrder> purchaseOrderList= purchaseOrderRepository.findByPurchaseOrderStatusAndProductProductId(PurchaseOrderStatusEnum.OPEN, new Long(1));
-        Collection<PurchaseOrder> purchaseOrderList= purchaseOrderRepository.findByPurchaseOrderStatus(PurchaseOrderStatusEnum.OPEN);
+        // Collection<PurchaseOrder> purchaseOrderList= purchaseOrderRepository.findByPurchaseOrderStatus(PurchaseOrderStatusEnum.OPEN);
+        Collection<PurchaseOrder> purchaseOrderList= purchaseOrderRepository.findAll();
         
         return purchaseOrderList.stream().map(purchase -> modelMapper.map(purchase, PurchaseOrderDto.class)).toList();
     }
