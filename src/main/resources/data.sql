@@ -20,7 +20,7 @@ INSERT INTO inventory_model (inventory_model_name,is_deleted) VALUES ("Lote Fijo
 
 /*Product Family*/
 
-INSERT INTO product_family (product_family_name, is_deleted, supplier_id, inventory_model_id) VALUES ("Family1", 0, 1, 1),("Family2", 0, 2, 2);
+INSERT INTO product_family (product_family_name, is_deleted, supplier_id, inventory_model_id) VALUES ("Family1", 0, 1, 1),("Family2", 0, 2, 2),("Family3",0,3,1);
 
 /*Product*/
 INSERT INTO product (product_name ,product_family_id ,stock,safe_stock,order_limit,optimal_batch) 
@@ -29,7 +29,8 @@ values
 	("Articulo 2", 2, 4,4,5,15),
 	("Articulo 3", 2, 10,6,8,20),
 	("Articulo 4", 2, 0,5,3,4),
-	("Articulo 5", 1, 15,10,12,50);
+	("Articulo 5", 1, 15,10,12,50),
+	("Articulo 6", 3,8,5,8,10);
 
 /*Sale*/
 INSERT INTO sale (customer_name, sale_date, product_id, quantity)

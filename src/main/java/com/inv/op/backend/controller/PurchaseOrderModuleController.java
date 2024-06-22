@@ -1,5 +1,8 @@
 package com.inv.op.backend.controller;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +16,7 @@ import com.inv.op.backend.dto.PurchaseOrderDto;
 import com.inv.op.backend.service.PurchaseOrderModuleService;
 
 @RestController
-@RequestMapping("/purchasOrderModule")
+@RequestMapping("/purchaseOrderModule")
 public class PurchaseOrderModuleController {
 
     @Autowired
@@ -33,6 +36,21 @@ public class PurchaseOrderModuleController {
     public ResponseEntity<?> getPurchaseOrder(@PathVariable Long purchaseOrderId) {
         return ResponseEntity.ok(purchaseOrderModuleService.getPurchaseOrder(purchaseOrderId));
     }
+
+    @PostMapping(path = "/purchaseOrder/{purchaseOrderId}/close")
+    public ResponseEntity<?> closePurchaseOrder(@PathVariable Long purchaseOrderId) {
+        return ResponseEntity.ok(purchaseOrderModuleService.closePurchaseOrder(purchaseOrderId));
+    }
+
+    @GetMapping(path = "/fixedIntervalPurchaseOrder")
+    public ResponseEntity<?> getFixedIntervalPurchaseOrders() {
+        return ResponseEntity.ok(purchaseOrderModuleService.getFixedIntervalPurchaseOrders());
+    }
+
+    @PostMapping(path = "/batchCreate", produces = "application/json")
+    public ResponseEntity<?> batchCreate(@RequestBody List<PurchaseOrderDto> newPurchaseOrders) {
+        return ResponseEntity.ok(purchaseOrderModuleService.batchCreate(newPurchaseOrders));
+    } 
 
     
 
