@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,13 +43,13 @@ public class Product {
     @JsonProperty(value = "productFamily")
     private ProductFamily productFamily;
 
-    @JsonProperty(value = "optimalBatch")
-    @Column(name = "optimal_batch", nullable = false, columnDefinition = "int default 100")
-    private Integer optimalBatch;
+    // @JsonProperty(value = "optimalBatch")
+    // @Column(name = "optimal_batch", nullable = false, columnDefinition = "int default 100")
+    // private Integer optimalBatch;
 
-    @JsonProperty(value = "orderLimit")
-    @Column(name = "order_limit", nullable = false, columnDefinition = "int default 100")
-    private Integer orderLimit;
+    // @JsonProperty(value = "orderLimit")
+    // @Column(name = "order_limit", nullable = false, columnDefinition = "int default 100")
+    // private Integer orderLimit;
 
     @JsonProperty(value = "safeStock")
     @Column(name = "safe_stock", nullable = false, columnDefinition = "int default 0")
@@ -62,13 +63,48 @@ public class Product {
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean not null default false ")
     private Boolean isDeleted;
 
+    @JsonProperty(value = "productDemand")
+    @Column(name = "product_demand", nullable = false, columnDefinition = "int default 0")
+    private Integer productDemand;
+
+    @JsonProperty(value = "maxStock")
+    @Column(name = "max_stock", nullable = false, columnDefinition = "int default 0")
+    private Integer maxStock;
+
+    @JsonProperty(value = "orderCost")
+    @Column(name = "order_cost", nullable = false, columnDefinition = "int default 1")
+    private Integer orderCost;
+
+    @JsonProperty(value = "storageCost")
+    @Column(name = "storage_cost", nullable = false, columnDefinition = "int default 1")
+    private Integer storageCost;
+
     public Boolean existStock(Integer checkStock) { return stock >=  checkStock; }
 
     public void reduceStock(Integer reduceStock){stock -= reduceStock;}
 
-    public Boolean lessThanOrderLimit() { return stock <= orderLimit;  }
+    public Boolean lessThanOrderLimit() { return stock <= this.calculateOrderLimit();  }
 
     public String getInventoryModel() { return this.getProductFamily().getInventoryModel().getInventoryModelName();}
 
     public void addStock(Integer orderQuantity) { stock += orderQuantity; }
+
+    public int calculateOptimalBatch() {
+        int optimalBatch=0;
+
+        switch (this.getInventoryModel().toLowerCase().trim()) {
+            case "lote fijo":
+                optimalBatch = (int)Math.ceil(Math.sqrt(2*this.orderCost*this.productDemand/this.storageCost));
+                break;
+            case "intervalo fijo": 
+                optimalBatch = this.maxStock - this.stock;
+                break;
+        } 
+
+        return optimalBatch > 0 ? optimalBatch : 0;
+    }
+
+    public Integer calculateOrderLimit() {
+        return this.productDemand * this.productFamily.getSupplier().getSupplierDeliveryTime();
+    }
 }
