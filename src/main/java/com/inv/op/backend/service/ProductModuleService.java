@@ -59,15 +59,20 @@ public class ProductModuleService {
         // productFamily, Integer optimalBatch, Integer orderLimit, Integer safeStock,
         // Integer stock, Boolean isDeleted
 
-        Product product = new Product(null,
-                newProduct.getProductName(),
-                newProduct.getProductDescription(),
-                productFamily,
-                newProduct.getOptimalBatch(),
-                newProduct.getOrderLimit(),
-                newProduct.getSafeStock(),
-                newProduct.getStock(),
-                false);
+
+
+        Product product = new Product();
+        product.setProductName(newProduct.getProductName());
+        product.setProductDescription(newProduct.getProductDescription());
+        product.setProductFamily(productFamily);
+        // product.setOrderLimit(newProduct.getOrderLimit());
+        product.setSafeStock(newProduct.getSafeStock());
+        product.setStock(newProduct.getStock());
+        product.setMaxStock(10);
+        product.setOrderCost(1);
+        product.setStorageCost(1);
+        product.setProductDemand(1);
+        product.setIsDeleted(false);
 
         try {
             productRepository.save(product);
@@ -124,10 +129,14 @@ public class ProductModuleService {
 
         product.setProductName(updatedProduct.getProductName());
         product.setProductDescription(updatedProduct.getProductDescription());
-        product.setOptimalBatch(updatedProduct.getOptimalBatch());
+        // product.setOptimalBatch(updatedProduct.getOptimalBatch());
         product.setStock(updatedProduct.getStock());
-        product.setOrderLimit(updatedProduct.getOrderLimit());
+        // product.setOrderLimit(updatedProduct.getOrderLimit());
         product.setSafeStock(updatedProduct.getSafeStock());
+        product.setProductDemand(updatedProduct.getProductDemand());
+        product.setMaxStock(updatedProduct.getMaxStock());
+        product.setStorageCost(updatedProduct.getStorageCost());
+        product.setOrderCost(updatedProduct.getOrderCost());
 
         if (!product.getProductFamily().getProductFamilyId().equals(updatedProduct.getProductFamilyId())) {
             ProductFamily productFamily = productFamilyRepository.findById(updatedProduct.getProductFamilyId())

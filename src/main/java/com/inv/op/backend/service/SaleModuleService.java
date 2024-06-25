@@ -108,9 +108,7 @@ public class SaleModuleService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-        //Si el stock bajó del punto de pedido y es lote fijo, creamos el pedido
+        
         if (product.lessThanOrderLimit() && product.getInventoryModel().toLowerCase().trim().equals("lote fijo")) {
             createNewPurchaseOrder(product);
         }
@@ -152,7 +150,7 @@ public class SaleModuleService {
         newPurchaseOrder.setSupplier(product.getProductFamily().getSupplier());
         newPurchaseOrder.setPurchaseOrderStatus(PurchaseOrderStatusEnum.OPEN);
         newPurchaseOrder.setPurchaseOrderDate(Date.from(Instant.now().minus(3, ChronoUnit.HOURS)));
-        newPurchaseOrder.setOrderQuantity(product.getOptimalBatch());
+        newPurchaseOrder.setOrderQuantity(product.calculateOptimalBatch());
 
         try {
             purchaseOrderRepository.save(newPurchaseOrder);

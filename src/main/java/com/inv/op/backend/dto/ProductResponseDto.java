@@ -16,8 +16,8 @@ public class ProductResponseDto implements Serializable {
     public ProductResponseDto(Product product){
         this.productName = product.getProductName();
         this.productDescription = product.getProductDescription();
-        this.optimalBatch = product.getOptimalBatch();
-        this.orderLimit = product.getOrderLimit();  
+        // this.optimalBatch = product.getOptimalBatch();
+        // this.orderLimit = product.getOrderLimit();  
         this.safeStock = product.getSafeStock();
         this.stock = product.getStock();
         // this.price = product.getPrice();
