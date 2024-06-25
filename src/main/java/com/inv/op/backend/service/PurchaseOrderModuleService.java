@@ -149,8 +149,6 @@ public class PurchaseOrderModuleService {
 
         List<PurchaseOrderDto> newPurhcaseOrders = productList.stream().map(p -> {
             PurchaseOrder purchaseOrder = new PurchaseOrder();
-            //TODO: Revisar la cantidad de orden porque en realidad debería ser Stock máximo - Stock actual.
-            //Aca supongo que el stock máximo lo defino con el lote óptimo, pero capaz tendría que ser una nueva variable?
             purchaseOrder.setOrderQuantity(p.calculateOptimalBatch());
             purchaseOrder.setProduct(p);
             purchaseOrder.setSupplier(p.getProductFamily().getSupplier());

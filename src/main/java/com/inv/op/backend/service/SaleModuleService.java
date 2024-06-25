@@ -108,9 +108,7 @@ public class SaleModuleService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        //TODO: Arreglar cantidad 
-        //Si el stock bajó del punto de pedido y es lote fijo, creamos el pedido
+        
         if (product.lessThanOrderLimit() && product.getInventoryModel().toLowerCase().trim().equals("lote fijo")) {
             createNewPurchaseOrder(product);
         }
