@@ -2,6 +2,7 @@ package com.inv.op.backend.service;
 
 import com.inv.op.backend.demandPrediction.DPSFactory;
 import com.inv.op.backend.demandPrediction.DemandPredictionStrategy;
+import com.inv.op.backend.demandPrediction.ErrorCalculationSingleton;
 import com.inv.op.backend.dto.*;
 import com.inv.op.backend.model.*;
 import com.inv.op.backend.repository.*;
@@ -26,11 +27,16 @@ public class DemandModuleService {
     private ProductFamilyRepository productFamilyRepository;
 
     @Autowired
+    private NextPeriodPredictionRepository nextPeriodPredictionRepository;
+
+    @Autowired
     private DemandPredictionModelRepository demandPredictionModelRepository;
 
     @Autowired
     private DemandPredictionModelTypeRepository demandPredictionModelTypeRepository;
 
+    @Autowired
+    private ParameterRepository parameterRepository;
 
     @Autowired
     private DPSFactory dpsFactory;
@@ -250,9 +256,15 @@ public class DemandModuleService {
 
 
     public DTODemandResults predict(Long id, Boolean family, Date desde, Boolean predecirMesActual) throws Exception {
-        Integer cantPeriodosAPredecir = 3;
-        String metodoError = "MAD";
-        DTODemandResults ret = DTODemandResults.builder().build();
+        Integer cantPeriodosAPredecir;
+        try {
+            cantPeriodosAPredecir = Integer.valueOf(parameterRepository.findByParameterNameIgnoreCase("PERIODOS_A_PREDECIR").getParameterValue());
+        } catch (NumberFormatException nfe) {
+            throw new Exception("Número de periodos a predecir no válido");
+        }
+        DTODemandResults ret = DTODemandResults.builder()
+                .errorAceptable(Double.valueOf(parameterRepository.findByParameterNameIgnoreCase("ERROR_ACEPTABLE").getParameterValue()))
+                .build();
 
         Collection<DTODemandPredictionModel> models = getModels(id, family);
 
@@ -261,6 +273,31 @@ public class DemandModuleService {
 
         Integer currMonth = calendar.get(Calendar.MONTH);
         Integer currYear = calendar.get(Calendar.YEAR);
+
+        DTONextPeriodDemand npd = DTONextPeriodDemand.builder().build();
+
+        if (predecirMesActual) {
+            npd.setMonth(currMonth + 1);
+            npd.setYear(currYear);
+        } else {
+            npd.setMonth((currMonth + 1) % 12 + 1);
+            npd.setYear(currMonth == 11 ? currYear + 1 : currYear);
+        }
+
+        if (!family) {
+            Optional<Product> optionalProduct = productRepository.findById(id);
+            if(optionalProduct.isEmpty()) throw new Exception("No se encontró el producto");
+            Product product = optionalProduct.get();
+            Optional<NextPeriodPrediction> optionalNextPeriodPrediction = nextPeriodPredictionRepository.findByProductAndMonthAndYear(product, npd.getMonth(), npd.getYear());
+            if(optionalNextPeriodPrediction.isPresent()) {
+                NextPeriodPrediction nextPeriodPrediction = optionalNextPeriodPrediction.get();
+                npd.setQuantity(nextPeriodPrediction.getQuantity());
+                npd.setModel(null);
+            }
+        }
+
+        ret.setNextPeriodDemand(npd);
+
 
         calendar.add(Calendar.MONTH, cantPeriodosAPredecir);
         if(predecirMesActual) calendar.add(Calendar.MONTH, -1);
@@ -299,5 +336,68 @@ public class DemandModuleService {
             ret.getPredictions().add(prediction);
         }
         return ret;
+    }
+
+    public DTOGeneralDemandParameters getGeneralParameters() {
+        DTOGeneralDemandParameters ret = DTOGeneralDemandParameters.builder()
+                .periodosAPredecir(Integer.valueOf(parameterRepository.findByParameterNameIgnoreCase("PERIODOS_A_PREDECIR").getParameterValue()))
+                .metodoCalculoError(parameterRepository.findByParameterNameIgnoreCase("METODO_CALCULO_ERROR").getParameterValue())
+                .errorAceptable(Double.valueOf(parameterRepository.findByParameterNameIgnoreCase("ERROR_ACEPTABLE").getParameterValue()))
+                .build();
+        return ret;
+    }
+
+    public void saveGeneralParameters(DTOGeneralDemandParameters dtoGeneralDemandParameters) throws Exception {
+        Parameter periodosAPredecir = parameterRepository.findByParameterNameIgnoreCase("PERIODOS_A_PREDECIR");
+        Integer intAux = dtoGeneralDemandParameters.getPeriodosAPredecir();
+        if(intAux <= 0) {
+            throw new Exception("Se debe predecir al menos un periodo");
+        }
+        periodosAPredecir.setParameterValue(intAux.toString());
+        parameterRepository.save(periodosAPredecir);
+
+        Parameter metodoCalculoError = parameterRepository.findByParameterNameIgnoreCase("METODO_CALCULO_ERROR");
+        String auxString = dtoGeneralDemandParameters.getMetodoCalculoError();
+        if (!Objects.equals(auxString, "MAD")
+                && !Objects.equals(auxString, "MSE")
+                && !Objects.equals(auxString, "MAPE")) {
+            throw new Exception("Método de cálculo de error no soportado");
+        }
+        metodoCalculoError.setParameterValue(auxString);
+        parameterRepository.save(metodoCalculoError);
+
+        Parameter errorAceptable = parameterRepository.findByParameterNameIgnoreCase("ERROR_ACEPTABLE");
+        Double auxDouble = dtoGeneralDemandParameters.getErrorAceptable();
+        if(auxDouble <= 0) {
+            throw new Exception("El error aceptable debe ser mayor a 0");
+        }
+        errorAceptable.setParameterValue(auxDouble.toString());
+        parameterRepository.save(errorAceptable);
+    }
+
+    public void setExpectedNextPeriodDemand(DTONextPeriodDemand dto) throws Exception {
+        if(dto.getModel() == null ) throw new Exception("No se especificó el modelo");
+        Optional<DemandPredictionModel> optionalDemandPredictionModel = demandPredictionModelRepository.findById(dto.getModel());
+        if(optionalDemandPredictionModel.isEmpty()) throw new Exception("No se encontró el modelo");
+        DemandPredictionModel dpm = optionalDemandPredictionModel.get();
+
+        Optional<NextPeriodPrediction> optionalNextPeriodPrediction = nextPeriodPredictionRepository.findByProductAndMonthAndYear(dpm.getProduct(), dto.getMonth(), dto.getYear());
+        NextPeriodPrediction npp;
+        if(optionalNextPeriodPrediction.isEmpty()) {
+            npp = new NextPeriodPrediction();
+            npp.setMonth(dto.getMonth());
+            npp.setYear(dto.getYear());
+            npp.setQuantity(dto.getQuantity());
+            npp.setDemandPredictionModel(dpm);
+            npp.setProduct(dpm.getProduct());
+            nextPeriodPredictionRepository.save(npp);
+        } else {
+            npp = optionalNextPeriodPrediction.get();
+            npp.setQuantity(dto.getQuantity());
+            nextPeriodPredictionRepository.save(npp);
+        }
+
+
+
     }
 }

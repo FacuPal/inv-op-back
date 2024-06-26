@@ -1,8 +1,6 @@
 package com.inv.op.backend.controller;
 
-import com.inv.op.backend.dto.DTODemandPredictionModel;
-import com.inv.op.backend.dto.DTODemandaHistoricaAnual;
-import com.inv.op.backend.dto.DTOError;
+import com.inv.op.backend.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -51,14 +49,26 @@ public class DemandModuleController {
 
 
     @GetMapping(path = "/generalParameters")
-    public ResponseEntity<?> getGeneralParameters(@RequestBody String requestBody){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    public ResponseEntity<?> getGeneralParameters(){
+        try {
+            return ResponseEntity.ok(demandModuleService.getGeneralParameters());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
 
     @PostMapping(path = "/generalParameters")
-    public ResponseEntity<?> saveGeneralParameters(@RequestBody String requestBody){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    public ResponseEntity<?> saveGeneralParameters(@RequestBody DTOGeneralDemandParameters dtoGeneralDemandParameters){
+        try {
+            demandModuleService.saveGeneralParameters(dtoGeneralDemandParameters);
+            return ResponseEntity.ok("");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
+
+
+
 
 
     @GetMapping(path = "/productsAndFamilies/{search}")
@@ -104,6 +114,17 @@ public class DemandModuleController {
     public ResponseEntity<?> getDemandPrediction(@PathVariable Long id, @RequestParam("family") Boolean family, @RequestParam("desde") Long desde, @RequestParam("predecirMesActual") Boolean predecirMesActual){
         try {
             return ResponseEntity.ok(demandModuleService.predict(id, family, new Date(desde), predecirMesActual));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
+    }
+
+    @PostMapping(path = "/demandPrediction")
+    public ResponseEntity<?> getDemandPrediction(@RequestBody DTONextPeriodDemand dto){
+        try {
+            demandModuleService.setExpectedNextPeriodDemand(dto);
+            return ResponseEntity.ok("");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));

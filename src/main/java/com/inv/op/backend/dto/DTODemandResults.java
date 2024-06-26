@@ -14,4 +14,8 @@ public class DTODemandResults {
 
     @Builder.Default
     Collection<DTODemandPrediction> predictions = new ArrayList<>();
+
+    DTONextPeriodDemand nextPeriodDemand;
+
+    Double errorAceptable;
 }
