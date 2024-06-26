@@ -51,9 +51,9 @@ public class Product {
     // @Column(name = "order_limit", nullable = false, columnDefinition = "int default 100")
     // private Integer orderLimit;
 
-    @JsonProperty(value = "safeStock")
-    @Column(name = "safe_stock", nullable = false, columnDefinition = "int default 0")
-    private Integer safeStock;
+    // @JsonProperty(value = "safeStock")
+    // @Column(name = "safe_stock", nullable = false, columnDefinition = "int default 0")
+    // private Integer safeStock;
 
     @JsonProperty(value = "stock")
     @Column(name = "stock", nullable = false, columnDefinition = "int default 0")
@@ -65,32 +65,32 @@ public class Product {
 
     // INVENTARIO
 
-    @JsonProperty(value = "annualDemand")
-    @Column(name = "annual_demand", nullable = false, columnDefinition = "int default 0")
-    private Integer annualDemand;  // Tasa de demanda
+    // @JsonProperty(value = "annualDemand")
+    // @Column(name = "annual_demand", nullable = false, columnDefinition = "int default 0")
+    // private Integer annualDemand;  // Tasa de demanda
 
-    @JsonProperty(value = "leadTime")
-    @Column(name = "lead_time", nullable = false, columnDefinition = "int default 0")
-    private Integer leadTime;  // Tiempo de entrega
+    // @JsonProperty(value = "leadTime")
+    // @Column(name = "lead_time", nullable = false, columnDefinition = "int default 0")
+    // private Integer leadTime;  // Tiempo de entrega
 
     @JsonProperty(value = "storageCost")
     @Column(name = "storage_cost", nullable = false, columnDefinition = "double default 0")
     private Double storageCost;
 
-    @JsonProperty(value = "orderingCost")
-    @Column(name = "ordering_cost", nullable = false, columnDefinition = "double default 0")
-    private Double orderingCost;
+    @JsonProperty(value = "orderCost")
+    @Column(name = "order_cost", nullable = false, columnDefinition = "double default 0")
+    private Double orderCost;
 
     @JsonProperty(value = "unitCost")
     @Column(name = "unit_cost", nullable = false)
     private Double unitCost; // Costo de compra por unidad
 
-    @JsonProperty(value = "cgi")
-    @Column(name = "cgi", nullable = true)
-    private Double cgi;
+    // @JsonProperty(value = "cgi")
+    // @Column(name = "cgi", nullable = true)
+    // private Double cgi;
 
-    public Product(Object o, String productName, String productDescription, ProductFamily productFamily, Integer optimalBatch, Integer orderLimit, Integer safeStock, Integer stock, boolean b) {
-    }
+    // public Product(Object o, String productName, String productDescription, ProductFamily productFamily, Integer optimalBatch, Integer orderLimit, Integer safeStock, Integer stock, boolean b) {
+    // }
   
     // DEVELOP
 
@@ -102,13 +102,13 @@ public class Product {
     @Column(name = "max_stock", nullable = false, columnDefinition = "int default 0")
     private Integer maxStock;
 
-    @JsonProperty(value = "orderCost")
-    @Column(name = "order_cost", nullable = false, columnDefinition = "int default 1")
-    private Integer orderCost;
+    // @JsonProperty(value = "orderCost")
+    // @Column(name = "order_cost", nullable = false, columnDefinition = "int default 1")
+    // private Integer orderCost;
 
-    @JsonProperty(value = "storageCost")
-    @Column(name = "storage_cost", nullable = false, columnDefinition = "int default 1")
-    private Integer storageCost;
+    // @JsonProperty(value = "storageCost")
+    // @Column(name = "storage_cost", nullable = false, columnDefinition = "int default 1")
+    // private Integer storageCost;
     //HASTA ACÁ
 
     public Boolean existStock(Integer checkStock) { return stock >=  checkStock; }
@@ -140,4 +140,25 @@ public class Product {
     public Integer calculateOrderLimit() {
         return this.productDemand * this.productFamily.getSupplier().getSupplierDeliveryTime();
     }
+
+    public Double calculateCGI() {
+        double purchaseCost = this.unitCost * this.calculateOptimalBatch();// .getUnitCost()*product.getAnnualDemand();
+        double storageCost = this.storageCost * (this.calculateOptimalBatch() / 2) ;//product.getStorageCost() * (product.getOptimalBatch() / 2);
+        double orderCost =  this.orderCost * ( this.productDemand / this.calculateOptimalBatch());//product.getOrderingCost() * (product.getAnnualDemand() / product.getOptimalBatch());
+
+        return purchaseCost + storageCost + orderCost;
+        // product.setCgi(cgi);
+        // return ;
+    }
+
+    public Double calculateSafetyStock() {
+
+        double z = 1.64;
+        double sigma = 1;
+        double leadTime = this.productFamily.getSupplier().getSupplierDeliveryTime();//.getLeadTime();
+
+        return z * sigma * Math.sqrt(leadTime);
+        // product.setSafeStock((int) Math.ceil(safetyStock));
+    }
+
 }

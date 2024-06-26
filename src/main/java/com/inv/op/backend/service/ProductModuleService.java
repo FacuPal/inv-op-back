@@ -1,5 +1,6 @@
 package com.inv.op.backend.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -66,11 +67,11 @@ public class ProductModuleService {
         product.setProductDescription(newProduct.getProductDescription());
         product.setProductFamily(productFamily);
         // product.setOrderLimit(newProduct.getOrderLimit());
-        product.setSafeStock(newProduct.getSafeStock());
+        // product.setSafeStock(newProduct.getSafeStock());
         product.setStock(newProduct.getStock());
         product.setMaxStock(10);
-        product.setOrderCost(1);
-        product.setStorageCost(1);
+        product.setOrderCost(1.0);
+        product.setStorageCost(1.0);
         product.setProductDemand(1);
         product.setIsDeleted(false);
 
@@ -86,10 +87,24 @@ public class ProductModuleService {
     }
     public Collection<ProductDto> getProductList() throws ProductNotFoundError {
 
-        return productRepository.findAll()
-                .stream()
-                .map(product -> modelMapper.map(product, ProductDto.class))
-                .toList();
+        // return productRepository.findAll()
+        //         .stream()
+        //         .map(product -> modelMapper.map(product, ProductDto.class))
+        //         .toList();
+
+        Collection<ProductDto> productDtoList = new ArrayList<ProductDto>();
+
+        Collection<Product> productList = productRepository.findAll();
+        for (Product product : productList) {
+            ProductDto productDto = modelMapper.map(product, ProductDto.class);
+            productDto.setOptimalBatch(product.calculateOptimalBatch());
+            productDtoList.add(productDto);
+        }
+        //         .stream()
+        //         .map(product -> modelMapper.map(product, ProductDto.class))
+        //         .toList();
+
+        return productDtoList;
     }
 
     public Optional<ProductDto> getProduct(Long id) {
@@ -132,7 +147,7 @@ public class ProductModuleService {
         // product.setOptimalBatch(updatedProduct.getOptimalBatch());
         product.setStock(updatedProduct.getStock());
         // product.setOrderLimit(updatedProduct.getOrderLimit());
-        product.setSafeStock(updatedProduct.getSafeStock());
+        // product.setSafeStock(updatedProduct.calculateSafetyStock());
         product.setProductDemand(updatedProduct.getProductDemand());
         product.setMaxStock(updatedProduct.getMaxStock());
         product.setStorageCost(updatedProduct.getStorageCost());

@@ -21,7 +21,7 @@ public class DTOProductoLista implements Serializable {
         this.productFamilyName = product.getProductFamily().getProductFamilyName();
         this.inventoryModelName = product.getProductFamily().getInventoryModel().getInventoryModelName();
         this.stock = product.getStock();
-        this.safeStock= product.getSafeStock();
+        this.safeStock= product.calculateSafetyStock();
         this.optimalBatch=product.calculateOptimalBatch();
         // this.orderLimit=product.getOrderLimit();
         this.isDeleted=product.getIsDeleted();
@@ -34,7 +34,7 @@ public class DTOProductoLista implements Serializable {
     private String productFamilyName;
     private String inventoryModelName;
     private Integer stock;
-    private Integer safeStock;
+    private Double safeStock;
     private Integer orderLimit;
     private Integer optimalBatch;
     private Boolean isDeleted;
