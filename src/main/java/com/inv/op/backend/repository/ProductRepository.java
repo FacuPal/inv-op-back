@@ -24,11 +24,11 @@ public interface ProductRepository extends ListCrudRepository<Product, Long> {
 
     Collection<Product> findByProductNameContainingIgnoreCase(String productName);
 
-    @Query("SELECT p FROM Product p WHERE p.stock <= p.orderLimit AND p.isDeleted = false AND p.ordenDeCompraPendiente = false")
-    List<Product> findRestockProducts();
+    // @Query("SELECT p FROM Product p WHERE p.stock <= p.orderLimit AND p.isDeleted = false AND p.ordenDeCompraPendiente = false")
+    // List<Product> findRestockProducts();
 
-    @Query("SELECT p FROM Product p WHERE p.stock <= p.safeStock AND p.isDeleted = false")
-    List<Product> findMissingProducts();
+    // @Query("SELECT p FROM Product p WHERE p.stock <= p.safeStock AND p.isDeleted = false")
+    // List<Product> findMissingProducts();
 
 
     List<Product> findAll();

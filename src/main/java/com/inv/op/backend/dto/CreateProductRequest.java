@@ -24,8 +24,8 @@ public class CreateProductRequest implements Serializable {
         this.safeStock = 0; 
         this.stock = 0;
         this.maxStock = 0;
-        this.orderCost = 0;
-        this.storageCost = 0;
+        this.orderCost = 0.0;
+        this.storageCost = 0.0;
         this.productDemand = 0;
     }
     @JsonProperty(value = "productName")
@@ -58,9 +58,9 @@ public class CreateProductRequest implements Serializable {
     private Integer maxStock;
 
     @JsonProperty(value = "orderCost")
-    private Integer orderCost;
+    private Double orderCost;
 
     @JsonProperty(value = "storageCost")
-    private Integer storageCost;
+    private Double storageCost;
 
 }

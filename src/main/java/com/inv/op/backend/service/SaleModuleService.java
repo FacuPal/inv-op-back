@@ -109,7 +109,9 @@ public class SaleModuleService {
             throw new RuntimeException(e);
         }
         
-        if (product.lessThanOrderLimit() && product.getInventoryModel().toLowerCase().trim().equals("lote fijo")) {
+        if (product.lessThanOrderLimit() 
+            && product.getInventoryModel().toLowerCase().trim().equals("lote fijo") 
+        ) {
             createNewPurchaseOrder(product);
         }
 

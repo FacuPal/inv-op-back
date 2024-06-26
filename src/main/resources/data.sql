@@ -26,15 +26,15 @@ INSERT INTO product_family (product_family_name, is_deleted, supplier_id, invent
 ("Envasados",0,3,1);
 
 /*Product*/
-INSERT INTO product (product_name,product_family_id,stock,safe_stock,product_demand,max_stock,order_cost,storage_cost) 
+INSERT INTO product (product_name,product_family_id,stock,product_demand,max_stock,order_cost,storage_cost,unit_cost) 
 values 
-	("Adhesivo de contacto",1,3,2,10,30,1,1),
-	("Cinta aisladora",1,5,3,5,15,1,1),
-	("Tornillo de madera",2,10,0,4,40,1,1),
-	("Tornillo autoperforante",2,10,6,20,100,1,1),
-	("Tuerca",2,0,5,4,10,1,1),
-	("Clavos",1,15,10,50,100,1,1),
-	("Garrafas",3,8,5,10,30,1,1);
+	("Adhesivo de contacto",1,3,10,30,1,1,3),
+	("Cinta aisladora",1,5,5,15,1,1,5),
+	("Tornillo de madera",2,10,4,40,1,1,1),
+	("Tornillo autoperforante",2,10,20,100,1,1,1),
+	("Tuerca",2,0,4,10,1,1,1),
+	("Clavos",1,15,50,100,1,1,1),
+	("Garrafas",3,8,10,30,1,1,10);
 
 /*Sale*/
 INSERT INTO sale (customer_name, sale_date, product_id, quantity)
