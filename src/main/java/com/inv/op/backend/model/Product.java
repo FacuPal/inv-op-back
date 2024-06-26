@@ -63,6 +63,37 @@ public class Product {
     @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean not null default false ")
     private Boolean isDeleted;
 
+    // INVENTARIO
+
+    @JsonProperty(value = "annualDemand")
+    @Column(name = "annual_demand", nullable = false, columnDefinition = "int default 0")
+    private Integer annualDemand;  // Tasa de demanda
+
+    @JsonProperty(value = "leadTime")
+    @Column(name = "lead_time", nullable = false, columnDefinition = "int default 0")
+    private Integer leadTime;  // Tiempo de entrega
+
+    @JsonProperty(value = "storageCost")
+    @Column(name = "storage_cost", nullable = false, columnDefinition = "double default 0")
+    private Double storageCost;
+
+    @JsonProperty(value = "orderingCost")
+    @Column(name = "ordering_cost", nullable = false, columnDefinition = "double default 0")
+    private Double orderingCost;
+
+    @JsonProperty(value = "unitCost")
+    @Column(name = "unit_cost", nullable = false)
+    private Double unitCost; // Costo de compra por unidad
+
+    @JsonProperty(value = "cgi")
+    @Column(name = "cgi", nullable = true)
+    private Double cgi;
+
+    public Product(Object o, String productName, String productDescription, ProductFamily productFamily, Integer optimalBatch, Integer orderLimit, Integer safeStock, Integer stock, boolean b) {
+    }
+  
+    // DEVELOP
+
     @JsonProperty(value = "productDemand")
     @Column(name = "product_demand", nullable = false, columnDefinition = "int default 0")
     private Integer productDemand;
@@ -78,10 +109,12 @@ public class Product {
     @JsonProperty(value = "storageCost")
     @Column(name = "storage_cost", nullable = false, columnDefinition = "int default 1")
     private Integer storageCost;
+    //HASTA ACÁ
 
     public Boolean existStock(Integer checkStock) { return stock >=  checkStock; }
 
     public void reduceStock(Integer reduceStock){stock -= reduceStock;}
+
 
     public Boolean lessThanOrderLimit() { return stock <= this.calculateOrderLimit();  }
 
