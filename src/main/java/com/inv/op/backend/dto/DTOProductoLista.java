@@ -21,9 +21,11 @@ public class DTOProductoLista implements Serializable {
         this.productFamilyName = product.getProductFamily().getProductFamilyName();
         this.inventoryModelName = product.getProductFamily().getInventoryModel().getInventoryModelName();
         this.stock = product.getStock();
+
         this.storageCost=product.getStorageCost();
         this.orderCost=product.getOrderCost();
         this.unitCost= product.getUnitCost();
+
         this.isDeleted=product.getIsDeleted();
         this.productFamilyId=product.getProductFamily().getProductFamilyId();
         this.productDemand=product.getProductDemand();
