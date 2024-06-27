@@ -15,20 +15,19 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateProductRequest implements Serializable {
 
-    public CreateProductRequest(String productName, String productDescription, Long productFamilyId) {
+    public CreateProductRequest(String productName, String productDescription, Long productFamilyId, Double storageCost, Double orderCost, Double unitCost,Integer stock, Integer productDemand, Integer maxStock ) {
         this.productName = productName;
         this.productDescription = productDescription;   
         this.productFamilyId = productFamilyId;
-        // this.optimalBatch = 0;
         this.orderLimit = 0;
         this.safeStock = 0; 
-        this.stock = 0;
-        this.maxStock = 0;
-        this.orderCost = 0.0;
-        this.storageCost = 0.0;
-        this.productDemand = 0;
-        this.unitCost = 0.0;
 
+        this.stock = stock;
+        this.maxStock = maxStock;
+        this.orderCost = orderCost;
+        this.storageCost = storageCost;
+        this.productDemand = productDemand;
+        this.unitCost = unitCost;
     }
     @JsonProperty(value = "productName")
     // @NotEmpty
@@ -58,10 +57,8 @@ public class CreateProductRequest implements Serializable {
 
     @JsonProperty(value = "maxStock")
     private Integer maxStock;
-
     @JsonProperty(value = "orderCost")
     private Double orderCost;
-
     @JsonProperty(value = "storageCost")
     private Double storageCost;
 

@@ -56,12 +56,12 @@ public class ProductModuleService {
         product.setProductFamily(productFamily);
 
         product.setStock(newProduct.getStock());
-        product.setMaxStock(10);
-        product.setOrderCost(1.0);
-        product.setStorageCost(1.0);
-        product.setProductDemand(1);
+        product.setMaxStock(newProduct.getMaxStock());
+        product.setOrderCost(newProduct.getOrderCost());
+        product.setStorageCost(newProduct.getStorageCost());
+        product.setProductDemand(newProduct.getProductDemand());
         product.setIsDeleted(false);
-        product.setUnitCost(1.0);
+        product.setUnitCost(newProduct.getUnitCost());
 
 
         try {
