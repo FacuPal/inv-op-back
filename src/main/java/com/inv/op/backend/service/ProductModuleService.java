@@ -43,6 +43,8 @@ public class ProductModuleService {
     private ModelMapper modelMapper;
     @Autowired
     PurchaseOrderRepository purchaseOrderRepository;
+    @Autowired
+    private HistoricDemandRepository historicDemandRepository;
 
 
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
@@ -107,7 +109,10 @@ public class ProductModuleService {
     }
     public List<DTOProductoLista> getAllProducts() {
         return productRepository.findAll().stream()
-                .map(DTOProductoLista::new)
+                .map(product -> {
+                    List<HistoricDemand> historicDemands = historicDemandRepository.findByProduct(product);
+                    return new DTOProductoLista(product, historicDemands);
+                })
                 .collect(Collectors.toList());
     }
     // Suppliers Services
@@ -125,7 +130,9 @@ public class ProductModuleService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundError());
 
-        return new DTOProductoLista(product);
+        List<HistoricDemand> historicDemands = historicDemandRepository.findByProduct(product);
+
+        return new DTOProductoLista(product, historicDemands);
     }
     public Product updateProduct(Long id, CreateProductRequest updatedProduct) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundError());
