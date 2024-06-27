@@ -9,9 +9,9 @@ VALUES
 ("ERROR_ACEPTABLE", "0.5", 0);
 
 /*Suppliers*/
-INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Supplier 1", 15, 0);
-INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Supplier 2", 2, 0);
-INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Supplier 3", 7, 0);
+INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Distribuidora SRL", 1, 0);
+INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Ferretería SA", 2, 0);
+INSERT INTO supplier (supplier_name, supplier_delivery_time, is_deleted) VALUES ("Mayorista Del Barrio", 3, 0);
 
 /*Inventory Model*/
 INSERT INTO inventory_model (inventory_model_name,is_deleted) VALUES ("Intervalo Fijo", 0);
@@ -20,32 +20,37 @@ INSERT INTO inventory_model (inventory_model_name,is_deleted) VALUES ("Lote Fijo
 
 /*Product Family*/
 
-INSERT INTO product_family (product_family_name, is_deleted, supplier_id, inventory_model_id) VALUES ("Family1", 0, 1, 1),("Family2", 0, 1, 1);
+INSERT INTO product_family (product_family_name, is_deleted, supplier_id, inventory_model_id) VALUES 
+("Pegamentos", 0, 1, 1),
+("Bulonería", 0, 2, 2),
+("Envasados",0,3,1);
 
 /*Product*/
-INSERT INTO product (product_name ,product_family_id ,stock,safe_stock) 
+INSERT INTO product (product_name,product_family_id,stock,product_demand,max_stock,order_cost,storage_cost,unit_cost) 
 values 
-	("Articulo 1",1, 3,2),
-	("Articulo 2", 2, 3,2),
-	("Articulo 3", 2, 3,2),
-	("Articulo 4", 2, 5,2),
-	("Articulo 5", 1, 6,2);
+	("Adhesivo de contacto",1,3,10,30,1,1,3),
+	("Cinta aisladora",1,5,5,15,1,1,5),
+	("Tornillo de madera",2,10,4,40,1,1,1),
+	("Tornillo autoperforante",2,10,20,100,1,1,1),
+	("Tuerca",2,0,4,10,1,1,1),
+	("Clavos",1,15,50,100,1,1,1),
+	("Garrafas",3,8,10,30,1,1,10);
 
 /*Sale*/
 INSERT INTO sale (customer_name, sale_date, product_id, quantity)
 VALUES 
-	("Facundo", "2024-06-02", 1, 10),
-	("Facundo", "2024-06-01", 1, 10),
-	("Facundo", "2024-05-31", 1, 10),
-	("Facundo", "2024-05-30", 1, 10),
-	("Facundo", "2024-05-02", 3, 10);
+	("José Perez", "2024-06-02", 1, 10),
+	("Fernando Gracia", "2024-06-01", 1, 10),
+	("Roberto Gomez Bolaños", "2024-05-31", 1, 10),
+	("Ramón Florez", "2024-05-30", 1, 10),
+	("Victor Oroño", "2024-05-02", 3, 10);
 
 /*PurchaseOrderStatus*/
-INSERT INTO purchase_order(product_id, purchase_order_date, supplier_id, purchase_order_status) 
+INSERT INTO purchase_order(product_id, purchase_order_date, supplier_id, purchase_order_status, order_quantity) 
 VALUES 
-	(1, '2024-06-09', 1, 'OPEN'),
-	(1, '2024-06-09', 1, 'OPEN'),
-	(1, '2024-06-09', 2, 'OPEN');
+	(1, '2024-06-09', 1, 'CLOSED',5),
+	(1, '2024-06-09', 1, 'CLOSED',10),
+	(1, '2024-06-09', 2, 'CLOSED',8);
 
 /*Historic Demand*/
 INSERT INTO `historic_demand` (`month`, `quantity`, `year`, `historic_demand_id`, `product_id`) VALUES

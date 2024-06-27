@@ -1,11 +1,11 @@
 package com.inv.op.backend.controller;
 
+import com.inv.op.backend.dto.DTOError;
+import com.inv.op.backend.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.inv.op.backend.service.InventoryModuleService;
 import org.springframework.web.client.HttpServerErrorException;
@@ -17,13 +17,32 @@ public class InventoryModuleController {
     @Autowired
     InventoryModuleService inventoryModuleService;
 
+
     @GetMapping(path = "/restockProduct")
-    public String restockProduct(@RequestBody String requestBody){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    public ResponseEntity<?> getRestockProducts(){
+        try {
+            return ResponseEntity.ok(inventoryModuleService.getRestockProducts());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
 
     @GetMapping(path = "/missingProduct")
-    public String getProducts(){
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500), "Not implemented");
+    public ResponseEntity<?> getMissingProducts(){
+        try {
+            return ResponseEntity.ok(inventoryModuleService.getMissingProducts());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/calculate/{productId}")
+    public ResponseEntity<?> calculateInventoryForProduct(@PathVariable Long productId) {
+        try {
+            Product product = inventoryModuleService.calculateInventoryForProduct(productId);
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new DTOError(e.getMessage()));
+        }
     }
 }

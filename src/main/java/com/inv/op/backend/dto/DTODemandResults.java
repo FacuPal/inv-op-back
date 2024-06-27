@@ -16,4 +16,6 @@ public class DTODemandResults {
     Collection<DTODemandPrediction> predictions = new ArrayList<>();
 
     DTONextPeriodDemand nextPeriodDemand;
+
+    Double errorAceptable;
 }

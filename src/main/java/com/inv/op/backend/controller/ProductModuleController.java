@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Collection;
 
 import com.inv.op.backend.dto.*;
+import com.inv.op.backend.model.InventoryModel;
+import com.inv.op.backend.model.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +37,13 @@ public class ProductModuleController {
     @Autowired
     ProductModuleService productModuleService;
 
+
     // Product endpoints
     @GetMapping(path = "/product")
     public ResponseEntity<?> getProductList() throws ProductNotFoundError {
         return ResponseEntity.ok(productModuleService.getProductList());
     }
+
     @GetMapping(path = "/product/{id}", produces = "application/json")
     public Optional<ProductDto> getProduct(@PathVariable Long id) throws ProductNotFoundError {
         return productModuleService.getProduct(id);
@@ -56,12 +60,25 @@ public class ProductModuleController {
         return ResponseEntity.ok().body(productModuleService.saveProduct(product));
     }
 
+    @GetMapping(path = "/product/{id}/defaultSupplier")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<?> getDefaultSupplier(@PathVariable Long id) throws RuntimeException {
+        return ResponseEntity.ok().body(productModuleService.getDefaultSupplier(id));
+    }
+
+
     // Supplier Endpoints
     @GetMapping(path = "/supplier/{id}", produces = "application/json")
     public SupplierDto getSupplier(@PathVariable Long id) throws SupplierNotFoundError {
         return productModuleService.getSupplier(id);
     }
-    @GetMapping(path = "/product", produces = "application/json")
+
+    @GetMapping(path = "/supplier", produces = "application/json")
+    public ResponseEntity<?> getSupplierList(){
+        return ResponseEntity.ok().body(productModuleService.getSupplierList());
+    }
+
+    @GetMapping(path = "/products", produces = "application/json")
     public ResponseEntity<List<DTOProductoLista>> getAllProducts() {
         List<DTOProductoLista> products = productModuleService.getAllProducts();
         return ResponseEntity.ok(products);
@@ -92,6 +109,37 @@ public class ProductModuleController {
     public ResponseEntity<String> restoreProduct(@PathVariable Long id) {
         productModuleService.restoreProduct(id);
         return ResponseEntity.ok("Product restored successfully");
+    }
+
+    @PostMapping(path = "/productFamily")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public ResponseEntity<?> saveProductFamily(@RequestBody ProductoFamiliaDto productFamilyDto) {
+        ProductoFamiliaDto savedFamily = productModuleService.saveProductFamily(productFamilyDto);
+        return ResponseEntity.ok(savedFamily);
+    }
+
+    @PutMapping(path = "/productFamily/{id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ResponseEntity<?> updateProductFamily(@PathVariable Long id, @RequestBody ProductoFamiliaDto updatedProductFamilyDto) {
+        productModuleService.updateProductFamily(id, updatedProductFamilyDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/productFamily/{id}", produces = "application/json")
+    public ResponseEntity<ProductoFamiliaDto> getProductFamily(@PathVariable Long id) {
+        ProductoFamiliaDto productFamily = productModuleService.getProductFamily(id);
+        return ResponseEntity.ok(productFamily);
+    }
+    @GetMapping(path = "/inventoryModels", produces = "application/json")
+    public ResponseEntity<List<DTOInventoryModel>> getAllInventoryModels() {
+        List<DTOInventoryModel> inventoryModels = productModuleService.getAllInventoryModels();
+        return ResponseEntity.ok(inventoryModels);
+    }
+
+    @GetMapping(path = "/suppliers", produces = "application/json")
+    public ResponseEntity<List<DTOSupplier>> getAllSuppliers() {
+        List<DTOSupplier> suppliers = productModuleService.getAllSuppliers();
+        return ResponseEntity.ok(suppliers);
     }
 
 

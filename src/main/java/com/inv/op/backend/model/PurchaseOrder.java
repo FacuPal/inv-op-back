@@ -51,4 +51,7 @@ public class PurchaseOrder {
     @JsonProperty(value = "supplier")
     private Supplier supplier;
 
+    @JsonProperty(value = "orderQuantity")
+    private Integer orderQuantity;  
+
 }

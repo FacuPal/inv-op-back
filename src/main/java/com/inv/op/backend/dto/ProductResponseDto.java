@@ -16,9 +16,9 @@ public class ProductResponseDto implements Serializable {
     public ProductResponseDto(Product product){
         this.productName = product.getProductName();
         this.productDescription = product.getProductDescription();
-        this.optimalBatch = product.getOptimalBatch();
-        this.orderLimit = product.getOrderLimit();  
-        this.safeStock = product.getSafeStock();
+        // this.optimalBatch = product.getOptimalBatch();
+        // this.orderLimit = product.getOrderLimit();  
+        this.safeStock = product.calculateSafetyStock();
         this.stock = product.getStock();
         // this.price = product.getPrice();
         this.productFamily = new ProductFamilyResponseDto(product.getProductFamily());
@@ -29,7 +29,7 @@ public class ProductResponseDto implements Serializable {
     private String productDescription;
     private Integer optimalBatch;
     private Integer orderLimit;
-    private Integer safeStock;
+    private Double safeStock;
     private Integer stock;
     private Boolean isDeleted;
     private ProductFamilyResponseDto productFamily;
