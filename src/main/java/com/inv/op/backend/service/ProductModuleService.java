@@ -54,6 +54,7 @@ public class ProductModuleService {
         product.setProductName(newProduct.getProductName());
         product.setProductDescription(newProduct.getProductDescription());
         product.setProductFamily(productFamily);
+
         product.setStock(newProduct.getStock());
         product.setMaxStock(10);
         product.setOrderCost(1.0);
@@ -61,6 +62,7 @@ public class ProductModuleService {
         product.setProductDemand(1);
         product.setIsDeleted(false);
         product.setUnitCost(1.0);
+
 
         try {
             productRepository.save(product);
@@ -78,7 +80,7 @@ public class ProductModuleService {
         //         .toList();
 
         Collection<ProductDto> productDtoList = new ArrayList<ProductDto>();
-
+      
         Collection<Product> productList = productRepository.findAll();
         for (Product product : productList) {
             ProductDto productDto = modelMapper.map(product, ProductDto.class);
@@ -88,6 +90,7 @@ public class ProductModuleService {
         //         .stream()
         //         .map(product -> modelMapper.map(product, ProductDto.class))
         //         .toList();
+
 
         return productDtoList;
     }
@@ -129,12 +132,16 @@ public class ProductModuleService {
 
         product.setProductName(updatedProduct.getProductName());
         product.setProductDescription(updatedProduct.getProductDescription());
+
         product.setStock(updatedProduct.getStock());
+
         product.setProductDemand(updatedProduct.getProductDemand());
         product.setMaxStock(updatedProduct.getMaxStock());
         product.setStorageCost(updatedProduct.getStorageCost());
         product.setOrderCost(updatedProduct.getOrderCost());
+
         product.setUnitCost(updatedProduct.getUnitCost()); // Make sure unitCost is being set
+
 
         if (!product.getProductFamily().getProductFamilyId().equals(updatedProduct.getProductFamilyId())) {
             ProductFamily productFamily = productFamilyRepository.findById(updatedProduct.getProductFamilyId())
@@ -272,5 +279,6 @@ public class ProductModuleService {
         return supplierRepository.findAll().stream()
                 .map(supplier -> modelMapper.map(supplier,DTOSupplier.class))
                         .collect(Collectors.toList());
+
     }
 }

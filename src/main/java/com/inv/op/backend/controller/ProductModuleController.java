@@ -78,7 +78,9 @@ public class ProductModuleController {
         return ResponseEntity.ok().body(productModuleService.getSupplierList());
     }
 
+
     @GetMapping(path = "/products", produces = "application/json")
+
     public ResponseEntity<List<DTOProductoLista>> getAllProducts() {
         List<DTOProductoLista> products = productModuleService.getAllProducts();
         return ResponseEntity.ok(products);

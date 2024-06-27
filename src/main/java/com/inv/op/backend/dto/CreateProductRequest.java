@@ -28,6 +28,7 @@ public class CreateProductRequest implements Serializable {
         this.storageCost = 0.0;
         this.productDemand = 0;
         this.unitCost = 0.0;
+
     }
     @JsonProperty(value = "productName")
     // @NotEmpty
@@ -63,7 +64,9 @@ public class CreateProductRequest implements Serializable {
 
     @JsonProperty(value = "storageCost")
     private Double storageCost;
+
     @JsonProperty(value = "unitCost")
     private Double unitCost;
+
 
 }
