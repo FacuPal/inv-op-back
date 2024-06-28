@@ -143,8 +143,8 @@ public class Product {
 
     public Double calculateCGI() {
         double purchaseCost = this.unitCost * this.calculateOptimalBatch();// .getUnitCost()*product.getAnnualDemand();
-        double storageCost = this.storageCost * (this.calculateOptimalBatch() / 2) ;//product.getStorageCost() * (product.getOptimalBatch() / 2);
-        double orderCost =  this.orderCost * ( this.productDemand / this.calculateOptimalBatch());//product.getOrderingCost() * (product.getAnnualDemand() / product.getOptimalBatch());
+        double storageCost = this.storageCost * ((double) this.calculateOptimalBatch() / 2) ;//product.getStorageCost() * (product.getOptimalBatch() / 2);
+        double orderCost =  this.orderCost * ( (double) this.productDemand / this.calculateOptimalBatch());//product.getOrderingCost() * (product.getAnnualDemand() / product.getOptimalBatch());
 
         return purchaseCost + storageCost + orderCost;
         // product.setCgi(cgi);
