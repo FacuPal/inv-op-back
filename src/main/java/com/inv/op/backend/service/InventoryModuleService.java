@@ -151,45 +151,16 @@ public class InventoryModuleService {
                 .optimalBatch(product.calculateOptimalBatch())
                 .orderLimit(product.calculateOrderLimit())
                 .safetyStock(product.calculateSafetyStock())
-                .cgi(product.calculateCGI())
+                .cgi(calculateNewCGI(product))
                 .modeloInventario(product.getProductFamily().getInventoryModel().getInventoryModelName())
                 .build();
     }
+    private double calculateNewCGI(Product product) {
+        double optimalBatch = product.getProductFamily().getInventoryModel().getInventoryModelName().equals("Intervalo Fijo") ? product.calculateOptimalBatch() + product.getProductDemand() : product.calculateOptimalBatch();
+        double purchaseCost = product.getUnitCost() * optimalBatch;// .getUnitCost()*product.getAnnualDemand();
+        double storageCost = product.getStorageCost() * (optimalBatch / 2) ;//product.getStorageCost() * (product.getOptimalBatch() / 2);
+        double orderCost =  product.getOrderCost() * ( (double) product.getProductDemand() / optimalBatch);//product.getOrderingCost() * (product.getAnnualDemand() / product.getOptimalBatch());
 
-    // private void calculateOptimalBatch(Product product) {
-    //     double annualDemand = product.getAnnualDemand();
-    //     double orderingCost = product.getOrderingCost();
-    //     double holdingCost = product.getStorageCost();
-
-    //     double optimalBatch = Math.sqrt((2 * annualDemand * orderingCost) / holdingCost);
-    //     product.setOptimalBatch((int) Math.ceil(optimalBatch));
-    // }
-
-    // private void calculateOrderPoint(Product product) {
-    //     int leadTime = product.getLeadTime();
-    //     int d = product.getAnnualDemand()/250;
-
-    //     int orderPoint = leadTime * d;
-    //     product.setOrderLimit(orderPoint);
-    // }
-
-    // private void calculateSafetyStock(Product product) {
-
-    //     double z = 1.64;
-    //     double sigma = 2;
-    //     double leadTime = product.getLeadTime();
-
-    //     double safetyStock = z * sigma * Math.sqrt(leadTime);
-    //     product.setSafeStock((int) Math.ceil(safetyStock));
-    // }
-
-    // private void calculateAndSetCgi(Product product) {
-
-    //     double purchaseCost = product.getUnitCost()*product.getAnnualDemand();
-    //     double storageCost = product.getStorageCost() * (product.getOptimalBatch() / 2);
-    //     double orderCost =  product.getOrderingCost() * (product.getAnnualDemand() / product.getOptimalBatch());
-
-    //     double cgi = purchaseCost + storageCost + orderCost;
-    //     product.setCgi(cgi);
-    // }
+        return purchaseCost + storageCost + orderCost;
+    }
 }
