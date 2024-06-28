@@ -10,6 +10,7 @@ import com.inv.op.backend.model.HistoricDemand;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -30,4 +31,5 @@ public interface HistoricDemandRepository extends ListCrudRepository<HistoricDem
             "   )" +
             ")")
     Integer getPeriod(Long id, Boolean family, Integer month, Integer year);
+    List<HistoricDemand> findByProduct(Product product);
 }

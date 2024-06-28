@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.inv.op.backend.dto.*;
 import com.inv.op.backend.enums.PurchaseOrderStatusEnum;
-import com.inv.op.backend.model.PurchaseOrder;
+import com.inv.op.backend.model.*;
 import com.inv.op.backend.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,6 @@ import com.inv.op.backend.error.product.ProductFamilyNotFound;
 import com.inv.op.backend.error.product.ProductNotFoundError;
 import com.inv.op.backend.error.product.ProductSaveError;
 import com.inv.op.backend.error.supplier.SupplierNotFoundError;
-import com.inv.op.backend.model.Product;
-import com.inv.op.backend.model.ProductFamily;
 import com.inv.op.backend.dto.CreateProductRequest;
 import com.inv.op.backend.dto.ProductDto;
 import com.inv.op.backend.dto.SupplierDto;
@@ -45,6 +43,8 @@ public class ProductModuleService {
     private ModelMapper modelMapper;
     @Autowired
     PurchaseOrderRepository purchaseOrderRepository;
+    @Autowired
+    private HistoricDemandRepository historicDemandRepository;
 
 
     public CreateProductRequest saveProduct(CreateProductRequest newProduct) {
@@ -52,36 +52,25 @@ public class ProductModuleService {
         ProductFamily productFamily = productFamilyRepository.findById(newProduct.getProductFamilyId())
                 .orElseThrow(() -> new ProductFamilyNotFound());
 
-        // if (!productFamily.isPresent()) {
-        // throw new ProductFamilyNotFound();
-        // }
-
-        // Product(Long id, String name, String description, ProductFamily
-        // productFamily, Integer optimalBatch, Integer orderLimit, Integer safeStock,
-        // Integer stock, Boolean isDeleted
-
-
-
         Product product = new Product();
         product.setProductName(newProduct.getProductName());
         product.setProductDescription(newProduct.getProductDescription());
         product.setProductFamily(productFamily);
-        // product.setOrderLimit(newProduct.getOrderLimit());
-        // product.setSafeStock(newProduct.getSafeStock());
+
         product.setStock(newProduct.getStock());
-        product.setMaxStock(10);
-        product.setOrderCost(1.0);
-        product.setStorageCost(1.0);
-        product.setProductDemand(1);
+        product.setMaxStock(newProduct.getMaxStock());
+        product.setOrderCost(newProduct.getOrderCost());
+        product.setStorageCost(newProduct.getStorageCost());
+        product.setProductDemand(newProduct.getProductDemand());
         product.setIsDeleted(false);
+        product.setUnitCost(newProduct.getUnitCost());
+
 
         try {
             productRepository.save(product);
         } catch (Exception e) {
             throw new ProductSaveError();
         }
-
-        // return new DefaultResponseDto(HttpStatus.CREATED, "Product Created");
         return newProduct;
 
     }
@@ -93,7 +82,7 @@ public class ProductModuleService {
         //         .toList();
 
         Collection<ProductDto> productDtoList = new ArrayList<ProductDto>();
-
+      
         Collection<Product> productList = productRepository.findAll();
         for (Product product : productList) {
             ProductDto productDto = modelMapper.map(product, ProductDto.class);
@@ -103,6 +92,7 @@ public class ProductModuleService {
         //         .stream()
         //         .map(product -> modelMapper.map(product, ProductDto.class))
         //         .toList();
+
 
         return productDtoList;
     }
@@ -119,7 +109,10 @@ public class ProductModuleService {
     }
     public List<DTOProductoLista> getAllProducts() {
         return productRepository.findAll().stream()
-                .map(DTOProductoLista::new)
+                .map(product -> {
+                    List<HistoricDemand> historicDemands = historicDemandRepository.findByProduct(product);
+                    return new DTOProductoLista(product, historicDemands);
+                })
                 .collect(Collectors.toList());
     }
     // Suppliers Services
@@ -137,21 +130,25 @@ public class ProductModuleService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundError());
 
-        return new DTOProductoLista(product);
+        List<HistoricDemand> historicDemands = historicDemandRepository.findByProduct(product);
+
+        return new DTOProductoLista(product, historicDemands);
     }
     public Product updateProduct(Long id, CreateProductRequest updatedProduct) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundError());
 
         product.setProductName(updatedProduct.getProductName());
         product.setProductDescription(updatedProduct.getProductDescription());
-        // product.setOptimalBatch(updatedProduct.getOptimalBatch());
+
         product.setStock(updatedProduct.getStock());
-        // product.setOrderLimit(updatedProduct.getOrderLimit());
-        // product.setSafeStock(updatedProduct.calculateSafetyStock());
+
         product.setProductDemand(updatedProduct.getProductDemand());
         product.setMaxStock(updatedProduct.getMaxStock());
         product.setStorageCost(updatedProduct.getStorageCost());
         product.setOrderCost(updatedProduct.getOrderCost());
+
+        product.setUnitCost(updatedProduct.getUnitCost()); // Make sure unitCost is being set
+
 
         if (!product.getProductFamily().getProductFamilyId().equals(updatedProduct.getProductFamilyId())) {
             ProductFamily productFamily = productFamilyRepository.findById(updatedProduct.getProductFamilyId())
@@ -167,11 +164,6 @@ public class ProductModuleService {
         return product;
     }
 
-    public List<ProductoFamiliaDto> getAllProductFamilies() {
-        return productFamilyRepository.findAll().stream()
-                .map(family -> new ProductoFamiliaDto(family.getProductFamilyId(), family.getProductFamilyName()))
-                .collect(Collectors.toList());
-    }
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundError());
@@ -221,5 +213,79 @@ public class ProductModuleService {
         }
 
         return modelMapper.map(optProduct.get().getProductFamily().getSupplier(), SupplierDto.class);
+    }
+    public List<ProductoFamiliaDto> getAllProductFamilies() {
+        return productFamilyRepository.findAll().stream()
+                .map(family -> modelMapper.map(family, ProductoFamiliaDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public ProductoFamiliaDto saveProductFamily(ProductoFamiliaDto productFamilyDto) {
+        ProductFamily productFamily = new ProductFamily();
+        productFamily.setProductFamilyName(productFamilyDto.getProductFamilyName());
+
+        try {
+            Supplier supplier = supplierRepository.findById(productFamilyDto.getSupplierId())
+                    .orElseThrow(() -> new SupplierNotFoundError());
+            productFamily.setSupplier(supplier);
+        } catch (SupplierNotFoundError e) {
+            throw new RuntimeException("Supplier not found", e);
+        }
+
+        try {
+            InventoryModel inventoryModel = inventoryModelRepository.findById(productFamilyDto.getInventoryModelId())
+                    .orElseThrow(() -> new RuntimeException("Inventory Model not found"));
+            productFamily.setInventoryModel(inventoryModel);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Inventory Model not found", e);
+        }
+
+        productFamily.setIsDeleted(false);
+        productFamilyRepository.save(productFamily);
+        return modelMapper.map(productFamily, ProductoFamiliaDto.class);
+    }
+
+    public void updateProductFamily(Long id, ProductoFamiliaDto updatedProductFamilyDto) {
+        ProductFamily productFamily = productFamilyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product Family not found"));
+
+        productFamily.setProductFamilyName(updatedProductFamilyDto.getProductFamilyName());
+
+
+        try {
+            Supplier supplier = supplierRepository.findById(updatedProductFamilyDto.getSupplierId())
+                    .orElseThrow(() -> new RuntimeException("Supplier not found"));
+            productFamily.setSupplier(supplier);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Supplier not found", e);
+        }
+
+        try {
+            InventoryModel inventoryModel = inventoryModelRepository.findById(updatedProductFamilyDto.getInventoryModelId())
+                    .orElseThrow(() -> new RuntimeException("Inventory Model not found"));
+            productFamily.setInventoryModel(inventoryModel);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Inventory Model not found", e);
+        }
+
+        productFamilyRepository.save(productFamily);
+    }
+
+    public ProductoFamiliaDto getProductFamily(Long id) {
+        ProductFamily productFamily = productFamilyRepository.findById(id)
+                .orElseThrow(() -> new ProductFamilyNotFound());
+
+        return modelMapper.map(productFamily, ProductoFamiliaDto.class);
+    }
+    public List<DTOInventoryModel> getAllInventoryModels() {
+        return inventoryModelRepository.findAll().stream()
+                .map(inventory -> modelMapper.map(inventory,DTOInventoryModel.class))
+                .collect(Collectors.toList());
+    }
+    public List<DTOSupplier> getAllSuppliers() {
+        return supplierRepository.findAll().stream()
+                .map(supplier -> modelMapper.map(supplier,DTOSupplier.class))
+                        .collect(Collectors.toList());
+
     }
 }
